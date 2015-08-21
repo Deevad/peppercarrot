@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#: Title       : Pepper&Carrot Project Manager
+#: Title       : Pepper&Carrot Renderfarm
 #: Author      : David REVOY < info@davidrevoy.com >
 #: License     : GPL
 
@@ -40,7 +40,7 @@ scriptversion="1.0"
 # then run the script to render your pages
 
 # DEPENDENCIES :
-# * bash
+# * Bash
 # * Imagemagick
 # * Krita (<2.9)
 # * Inkscape
