@@ -274,10 +274,10 @@ _update_gfx_cache()
                 
                         # Convert to PNG , for being in the singlepage loop (later) this version needs a padding top and botton.
                         gifframe1="$workingpath"/"$folder_cache"/"$giffile"[0]
-                        convert $gifframe1 -bordercolor white -border 0x20 -colorspace sRGB "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+                        convert $gifframe1 -bordercolor white -border 0x20 -define png:color-type=2 -colorspace sRGB "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
                         
                          # copy lowres PNG gfx for lang proxy SVG
-                        convert $gifframe1 -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lang"/gfx_"$pngfile"
+                        convert $gifframe1 -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -define png:color-type=2 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lang"/gfx_"$pngfile"
                 done
             fi
         done
@@ -324,7 +324,7 @@ _update_gfx_cache()
             cp "$workingpath"/"$folder_cache"/gfx_"$pngfile" "$workingpath"/"$folder_hires"/"$folder_gfxonly"/gfx_"$pngfile"
             
             # generate low-res *.png in lang
-            convert "$workingpath"/"$folder_cache"/gfx_"$pngfile" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lang"/gfx_"$pngfile"
+            convert "$workingpath"/"$folder_cache"/gfx_"$pngfile" -resize "$resizejpg" -define png:color-type=2 -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lang"/gfx_"$pngfile"
             
             # generate low-res gfx_file.jpg in low-res/gfx-only
             convert "$workingpath"/"$folder_cache"/gfx_"$pngfile" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lowres"/"$folder_gfxonly"/gfx_"$jpgfile"
@@ -403,7 +403,7 @@ _update_gfx_cache()
                 # rule to exclude cover from being cropped :
                 if echo "$pngfile" | grep -q 'P[0-9][0-9]' ; then
                     echo "${Blue} -> ${Yellow} Cropping ${Off}"
-                    convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -chop 0x70 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+                    convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -define png:color-type=2 -colorspace sRGB -chop 0x70 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
                 else
                     echo "${Blue} -> ${Yellow} No crop: this is a cover ${Off}"
                 fi
@@ -490,7 +490,7 @@ _update_lang()
                     if [ $cropping_pages = 1 ]; then
                         if echo "$pngfile" | grep -q 'P[0-9][0-9]' ; then
                             echo "${Blue} -> ${Yellow} Cropping ${Off}"
-                            convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -chop 0x70 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+                            convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -define png:color-type=2 -colorspace sRGB -chop 0x70 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
                         else
                             echo "${Blue} -> ${Yellow} No crop: this is a cover ${Off}"
                         fi
