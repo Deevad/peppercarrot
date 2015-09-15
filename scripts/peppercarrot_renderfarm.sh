@@ -98,6 +98,7 @@ Black=$'\e[1;30m'
 
 # Memory token
 gfx_need_regen=0
+svg_need_commit=0
 
 clear
 
@@ -474,11 +475,26 @@ _update_lang()
                 # New loop : we process the SVG of the current lang dir
                 for svgfile in *.svg;
                     do
+                    
                     pngfile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')".png"
                     jpgfile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')".jpg"
                 
                     # verbose
                     echo " ${Yellow}==> ${Green}[$langdir] ==> [$svgfile] ==> Inkscape export ${Off}"
+                    
+                    # sanify test for SVG coming from Inkscape on Windows, writing problematic path:
+                    if grep -q 'xlink:href=".*.\\gfx_' "$svgfile"; then
+                       echo " ${Blue}=> ${Yellow}[AUTO FIXING] $svgfile${Off}"
+                       echo "${Red} (-)"
+                       grep 'xlink:href="' "$svgfile"
+                       echo "${Off}"
+                       sed -i 's/xlink:href=".*.\\gfx/xlink:href="..\/gfx/g' $svgfile
+                       echo "${Green} (+)"
+                       grep 'xlink:href="' "$svgfile"
+                       echo "${Off}"
+                      #update token
+                      svg_need_commit=1
+                    fi
                 
                     # Final hi-res PNG print with lang prefix
                     inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
@@ -675,6 +691,13 @@ _update_lang
     
 echo ""
 echo "   ${White}${BlueBG}       Task for $projectname done.        ${Off}"
+
+    if [ $svg_need_commit = 1 ]; then
+        echo ""
+        echo " ${Red}/!\ WARNING  /!\ ${Off}"
+        echo " ${Yellow} Problematic SVG were found and autofixed.${Off}"
+        echo ""
+    fi
 
 notify-send "Task for $projectname done" -t 5000
 echo -n "Press [Enter] to exit"
