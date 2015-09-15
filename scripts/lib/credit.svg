@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r"
+   width="2481"
+   height="3503"
+   sodipodi:docname="Pepper-and-Carrot_by-David-Revoy_E10P06.svg">
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1600"
+     inkscape:window-height="837"
+     id="namedview4"
+     showgrid="false"
+     inkscape:zoom="0.2602153"
+     inkscape:cx="983.86008"
+     inkscape:cy="1481.5847"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer2"
+     inkscape:object-nodes="true"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <sodipodi:guide
+       position="327.75,3395.375"
+       orientation="0,1"
+       id="guide4214" />
+  </sodipodi:namedview>
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="artwork"
+     style="display:inline"
+     transform="translate(0,1024)"
+     sodipodi:insensitive="true">
+    <image
+       sodipodi:absref="/home/deevad/Scripts/lib/peppercarrot_creator/../gfx_Pepper-and-Carrot_by-David-Revoy_EYYPXX.png"
+       xlink:href="../gfx_Pepper-and-Carrot_by-David-Revoy_EYYPXX.png"
+       y="-1023.3771"
+       x="0.54707891"
+       id="image4223"
+       style="image-rendering:optimizeQuality"
+       preserveAspectRatio="none"
+       height="3504.5391"
+       width="2481.4438" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="speechbubbles"
+     style="display:inline"
+     transform="translate(0,1024)">
+    <path
+       style="fill:#ffffff;stroke:none"
+       d="m -2021.8885,646.19917 c 1.0628,-51.0158 26.5707,-103.09442 170.0526,-112.65988 143.4819,-9.56546 203.0004,48.89014 207.2517,90.34047 4.2513,41.45033 -82.9007,96.71744 -162.6129,97.78027 -79.7121,1.06282 -214.6914,-11.69112 -214.6914,-75.46086 z"
+       id="path4279"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:#ffffff;stroke:none"
+       d="m -1788.0661,898.08964 c 70.1467,-44.63882 88.2148,-124.35099 45.7016,-190.24639 -42.5132,-65.8954 -82.9007,-54.20428 -82.9007,-54.20428 l 35.0734,41.45033 c 0,0 97.7803,97.78027 2.1257,203.00034 z"
+       id="path4281"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csccc" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="text"
+     style="display:inline;opacity:0.855"
+     transform="translate(0,1024)">
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3027"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:125%;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;display:inline;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(1.1196913,0,0,1.1666933,-289.56399,-1079.7044)"><flowRegion
+         id="flowRegion3029"><rect
+           id="rect3031"
+           width="2475.8752"
+           height="241.27675"
+           x="135.21135"
+           y="219.33444"
+           style="text-align:center;text-anchor:middle" /></flowRegion><flowPara
+         id="flowPara3033" /><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:48px;font-family:Lavi;-inkscape-font-specification:Lavi;text-align:center;text-anchor:middle"
+         id="flowPara3499">Pepper&amp;Carrot is entirely free, open-source and sponsored</flowPara><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:48px;font-family:Lavi;-inkscape-font-specification:Lavi;text-align:center;text-anchor:middle"
+         id="flowPara3488">thanks to the patronage of its readers.</flowPara><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:48px;font-family:Lavi;-inkscape-font-specification:Lavi;text-align:center;text-anchor:middle"
+         id="flowPara3497">For this episode, thank you to the 422 Patrons:</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3027-8-8"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:125%;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;display:inline;fill:#a72f14;fill-opacity:1;stroke:none"
+       transform="matrix(1.2234224,0,0,1.2506407,-289.18878,1666.7546)"><flowRegion
+         id="flowRegion3029-9-3"><rect
+           id="rect3031-9-1"
+           width="2230.314"
+           height="376.21677"
+           x="135.21135"
+           y="219.33444"
+           style="text-align:center;text-anchor:middle;fill:#a72f14;fill-opacity:1" /></flowRegion><flowPara
+         id="flowPara3033-3-0" /><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:48px;font-family:Lavi;-inkscape-font-specification:Lavi;text-align:center;text-anchor:middle;fill:#a72f14;fill-opacity:1"
+         id="flowPara3067-4">http://www.patreon.com/davidrevoy</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3027-8-8-2"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:125%;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;display:inline;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(1.0085133,0,0,1.0406001,-24.185556,1674.8121)"><flowRegion
+         id="flowRegion3029-9-3-5"><rect
+           id="rect3031-9-1-6"
+           width="2230.314"
+           height="376.21677"
+           x="135.21135"
+           y="219.33444"
+           style="text-align:center;text-anchor:middle" /></flowRegion><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:48px;font-family:Lavi;-inkscape-font-specification:Lavi;text-align:center;text-anchor:middle"
+         id="flowPara3055">You too can become a patron of Pepper&amp;Carrot for the next episode at</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3027-8-8-2-8-6"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:125%;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;display:inline;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(0.78840156,0,0,0.81820527,254.19922,1939.7566)"><flowRegion
+         id="flowRegion3029-9-3-5-1-2"><rect
+           id="rect3031-9-1-6-8-7"
+           width="2230.314"
+           height="376.21677"
+           x="135.21135"
+           y="219.33444"
+           style="text-align:center;text-anchor:middle" /></flowRegion><flowPara
+         id="flowPara3033-3-0-2-4-3" /><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:48px;font-family:Lavi;-inkscape-font-specification:Lavi;text-align:center;text-anchor:middle"
+         id="flowPara3233-6-14" /></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3027-8-8-2-8-6-3"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:125%;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;display:inline;fill:#000000;fill-opacity:1;stroke:none"
+       transform="matrix(0.78840156,0,0,0.83353067,254.68892,1944.2866)"><flowRegion
+         id="flowRegion3029-9-3-5-1-2-8"><rect
+           id="rect3031-9-1-6-8-7-4"
+           width="2230.314"
+           height="376.21677"
+           x="135.21135"
+           y="219.33444"
+           style="text-align:center;text-anchor:middle" /></flowRegion><flowPara
+         id="flowPara3033-3-0-2-4-3-2" /><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:48px;font-family:Lavi;-inkscape-font-specification:Lavi;text-align:center;text-anchor:middle"
+         id="flowPara3278-7">License : Creative Commons Attribution 4.0</flowPara><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:48px;font-family:Lavi;-inkscape-font-specification:Lavi;text-align:center;text-anchor:middle"
+         id="flowPara3233-6-14-6">Source : available at www.peppercarrot.com</flowPara><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:48px;font-family:Lavi;-inkscape-font-specification:Lavi;text-align:center;text-anchor:middle"
+         id="flowPara4904">Software : this episode was 100% drawn with libre software</flowPara><flowPara
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:48px;font-family:Lavi;-inkscape-font-specification:Lavi;text-align:center;text-anchor:middle"
+         id="flowPara4908">Krita 2.9.6 , Inkscape 0.91 on Linux Mint 17 </flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot4307"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;line-height:125%;font-family:Fondamento;-inkscape-font-specification:Fondamento;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       transform="translate(0,-1024)"><flowRegion
+         id="flowRegion4309"><rect
+           id="rect4311"
+           width="680.59155"
+           height="277.55969"
+           x="-836.48126"
+           y="2419.3765"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Fondamento;-inkscape-font-specification:Fondamento" /></flowRegion><flowPara
+         id="flowPara4313" /></flowRoot>  </g>
+</svg>
