@@ -103,7 +103,7 @@ export svg_need_commit=0
 
 clear
 
-_display_ui_header()
+_display_ui()
 {
 echo ""
 echo "   ${White}${BlueBG}            [ Pepper&Carrot Manager  ]              ${Off}"
@@ -115,7 +115,7 @@ echo " workingpath: $workingpath "
 echo ""
 }
 
-_auto_setup()
+_setup()
 {
     cd "$workingpath"
     
@@ -197,7 +197,7 @@ _dir_creation()
     echo ""
 }
 
-_update_gfx_cache_changed_gif()
+_update_gfx_gif_work()
 {
     giffile=$1
     pngfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".png"
@@ -264,7 +264,7 @@ _update_gfx_cache_changed_gif()
     fi
 }
 
-_update_gfx_cache_changed_kra()
+_update_gfx_kra_work()
 {
     krafile=$1
     cd "$workingpath"
@@ -396,7 +396,7 @@ _update_gfx_cache_changed_kra()
     fi
 }
 
-_update_gfx_cache()
+_update_gfx()
 {
     # Method to update change in graphical file
     # trying to be smart and consume the less power, but more disk space.
@@ -417,8 +417,8 @@ _update_gfx_cache()
     then 
     echo "${Yellow} Gif: Processing the gif files in project root.${Off}"
     echo "${Yellow} =-=-=-=-=-=-=-=-=-=[GIF]=-=-=-=-=-=-=-=-=-=-=-${Off}"
-    export -f _update_gfx_cache_changed_gif
-    ls -1 *.gif | parallel _update_gfx_cache_changed_gif "{}"
+    export -f _update_gfx_gif_work
+    ls -1 *.gif | parallel _update_gfx_gif_work "{}"
     fi
     
     
@@ -428,8 +428,8 @@ _update_gfx_cache()
     
     cd "$workingpath"
     
-    export -f _update_gfx_cache_changed_kra
-    ls -1 *.kra | parallel _update_gfx_cache_changed_kra "{}"
+    export -f _update_gfx_kra_work
+    ls -1 *.kra | parallel _update_gfx_kra_work "{}"
     
 }
 
@@ -691,10 +691,10 @@ _watermark()
 }
 
 
-_display_ui_header
-_auto_setup
+_display_ui
+_setup
 _dir_creation
-_update_gfx_cache
+_update_gfx
 _update_lang
 # _watermark
 
