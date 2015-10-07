@@ -204,7 +204,7 @@ _update_gfx_gif_work()
     pngfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".png"
 
     # compare if gif file changed
-    if diff "$workingpath"/"$giffile" "$workingpath"/"$folder_cache"/"$giffile" >/dev/null ; then
+    if diff "$workingpath"/"$giffile" "$workingpath"/"$folder_cache"/"$giffile" &>/dev/null ; then
     #no
         echo " ${Yellow}==> ${Blue}[$giffile]${Off} is up-to-date."
 
@@ -227,7 +227,7 @@ _update_gfx_gif_work()
             langdir="${langdir%%?}"
 
             # Check if lang get update, or copy them
-            if diff -r "$workingpath"/"$folder_lang"/"$langdir" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir" >/dev/null ; then
+            if diff -r "$workingpath"/"$folder_lang"/"$langdir" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir" &>/dev/null ; then
             #no
                 echo " ${Yellow}==> ${Blue}[$langdir]${Off} lang repo is up-to-date."
 
@@ -275,7 +275,7 @@ _update_gfx_kra_work()
     jpgfileversionning=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')_$version".jpg"
 
     # compare if kra file changed
-    if diff "$workingpath"/"$krafile" "$workingpath"/"$folder_cache"/"$krafile" >/dev/null ; then
+    if diff "$workingpath"/"$krafile" "$workingpath"/"$folder_cache"/"$krafile" &>/dev/null ; then
     #no
         echo " ${Yellow}==> ${Blue}[$krafile]${Off} is up-to-date."
 
@@ -331,7 +331,7 @@ _update_gfx_kra_work()
         cd "$workingpath"/"$folder_lang"/
 
         # compare if langage folder changed compare to the version we cached in cache/lang/lang
-        if diff -r "$workingpath"/"$folder_lang"/"$langdir" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir" >/dev/null ; then
+        if diff -r "$workingpath"/"$folder_lang"/"$langdir" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir" &>/dev/null ; then
         #no
             echo " ${Yellow}==> ${Blue}[$langdir] ${Off} folder is up-to-date."
 
@@ -404,7 +404,7 @@ _update_gfx()
     # ( only file changed are reprocessed thanks to a cache )
 
     # project might contain *.gif animation
-    getamountofgif=`ls -1 *.gif 2>/dev/null | wc -l`
+    getamountofgif=`ls -1 *.gif 2&>/dev/null | wc -l`
     if [ $getamountofgif != 0 ]
     then 
     echo "${Yellow} Gif: Processing the gif files in project root.${Off}"
@@ -439,7 +439,7 @@ _update_lang_work()
     cd "$workingpath"/"$folder_lang"/
 
     # compare if langage folder changed compare to the version we cached in cache/lang/lang
-    if diff -r "$workingpath"/"$folder_lang"/"$langdir" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir" >/dev/null ; then
+    if diff -r "$workingpath"/"$folder_lang"/"$langdir" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir" &>/dev/null ; then
         #no
         echo " ${Yellow}==> ${Blue}[$langdir] ${Off} folder is up-to-date."
 
@@ -552,7 +552,7 @@ _create_singlepage_work()
     cd "$workingpath"/"$folder_cache"/"$langdir"/
 
     # Final low-res singlepage with cache for speed:
-    if diff "$workingpath"/"$folder_lowres"/"$folder_singlepage"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" >/dev/null ; then
+    if diff "$workingpath"/"$folder_lowres"/"$folder_singlepage"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" &>/dev/null ; then
         #no
         echo "${Yellow}[$langdir] ${Off} ${Blue} $langdir_$jpgfile ${Off} is up-to-date."
     else
