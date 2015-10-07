@@ -382,7 +382,7 @@ _update_gfx_kra_work()
                 echo "${Blue} -> ${Yellow} Cropping ${Off}"
                 convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -chop 0x70 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
             else
-                echo "${Blue} -> ${Yellow} No crop: this is a cover ${Off}"
+                echo "${Blue}[info] ${Off} cover artwork, doesn't need cropping."
             fi
 
         fi
@@ -499,7 +499,7 @@ _update_lang_work()
                     echo "${Blue} -> ${Yellow} Cropping ${Off}"
                     convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -chop 0x70 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
                 else
-                    echo "${Blue} -> ${Yellow} No crop: this is a cover ${Off}"
+                    echo "${Blue}[info] ${Off} cover artwork, doesn't need cropping."
                 fi
             fi
 
