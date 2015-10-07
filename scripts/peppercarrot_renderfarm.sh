@@ -655,40 +655,11 @@ _create_zip_collection()
     fi
 }
 
-_watermark()
-{
-    # Method to create watermark on the top of the gfx_ in lang for prerelease
-    # Let trust the user first. 
-    
-    echo ""
-    echo "${Yellow} Watermarking ${Off}"
-    echo "${Yellow} =-=-=-=-=-=- ${Off}"
-    
-    cd "$workingpath"
-    cd "$workingpath"/"$folder_cache"/
-
-    for watermarkable in *.png;
-    do
-    
-            # (RE)generate low-res *.png in lang
-            convert "$workingpath"/"$folder_cache"/"$watermarkable" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lang"/"$watermarkable"
-    
-            convert -size 140x80 xc:none -fill '#F5F5F5' -gravity NorthWest -colorspace sRGB -draw "text 10,10 'beta-version'" -gravity SouthEast -draw "text 5,15 'work-in-progress'" miff:- | composite -compose Multiply -colorspace sRGB -tile - "$workingpath"/"$folder_lang"/"$watermarkable"  "$workingpath"/"$folder_lang"/"$watermarkable"
-            
-        echo " ${Yellow}==> ${Blue} lang/$watermarkable ${Off}"
-        
-    done
-    echo " "
-
-}
-
-
 _display_ui
 _setup
 _dir_creation
 _update_gfx
 _update_lang
-# _watermark
 
 # modules
     if [ $singlepage_generation = 1 ]; then
