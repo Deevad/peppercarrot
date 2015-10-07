@@ -155,42 +155,42 @@ _dir_creation()
     if [ -d "$workingpath/$folder_cache" ]; then
     echo "* $folder_cache found" 
     else
-    echo "${Green}*${Off} creating folder: $folder_cache"
+    echo "${Green}* creating folder: $folder_cache ${Off}"
     mkdir -p "$workingpath"/"$folder_cache"
     fi
 
     if [ -d "$workingpath/$folder_lang" ]; then
     echo "* $folder_lang found" 
     else
-    echo "${Green}*${Off} creating folder: $folder_lang"
+    echo "${Green}* creating folder: $folder_lang ${Off}"
     mkdir -p "$workingpath"/"$folder_lang"
     fi
 
     if [ -d "$workingpath/$folder_lowres" ]; then
     echo "* $folder_lowres found" 
     else
-    echo "${Green}*${Off} creating folder: $folder_lowres/$folder_gfxonly"
+    echo "${Green}* creating folder: $folder_lowres/$folder_gfxonly ${Off}"
     mkdir -p "$workingpath"/"$folder_lowres"/"$folder_gfxonly"
     fi
 
     if [ -d "$workingpath/$folder_hires" ]; then
     echo "* $folder_hires found" 
     else
-    echo "${Green}*${Off} creating folder: $folder_hires/$folder_gfxonly"
+    echo "${Green}* creating folder: $folder_hires/$folder_gfxonly ${Off}"
     mkdir -p "$workingpath"/"$folder_hires"/"$folder_gfxonly"
     fi
 
     if [ -d "$workingpath/$folder_backup" ]; then
     echo "* $folder_backup found" 
     else
-    echo "${Green}*${Off} creating folder: $folder_backup"
+    echo "${Green}* creating folder: $folder_backup ${Off}"
     mkdir -p "$workingpath"/"$folder_backup"
     fi
     
     if [ -d "$workingpath/$folder_wip" ]; then
     echo "* $folder_wip found" 
     else
-    echo "${Green}*${Off} creating folder: $folder_wip"
+    echo "${Green}* creating folder: $folder_wip ${Off}"
     mkdir -p "$workingpath"/"$folder_wip"
     fi
     
@@ -600,7 +600,7 @@ _create_singlepage()
     echo "${Green}* $folder_lowres/$folder_singlepage found" 
     else
     mkdir -p "$workingpath"/"$folder_lowres"/"$folder_singlepage"
-    echo "${Green}*${Off} creating folder: $folder_lowres/$folder_singlepage"
+    echo "${Green}* creating folder: $folder_lowres/$folder_singlepage"
     fi
     
     echo ""
@@ -628,7 +628,7 @@ _create_zip_collection()
         echo "* $folder_zip found" 
         else
         mkdir -p "$workingpath"/"$folder_zip"
-        echo "${Green}*${Off} creating folder: $folder_zip"
+        echo "${Green}* creating folder: $folder_zip ${Off}"
         fi
         
         # find the project name, thanks vignette/cover filename.
