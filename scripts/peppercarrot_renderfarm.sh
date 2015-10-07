@@ -402,15 +402,6 @@ _update_gfx()
     # Method to update change in graphical file
     # trying to be smart and consume the less power, but more disk space.
     # ( only file changed are reprocessed thanks to a cache )
-    
-    # project might not contain yet a README.md
-        if [ ! -f "$folder_lang"/README.md ]; then
-            #no
-            echo "${Red} MD: No $folder_lang/README.md found, you might consider to create one, or setup a GITHUB.${Off}"
-        else
-            #yes
-            echo " ${Yellow}==> ${Blue}README.md${Off} found."
-        fi
 
     # project might contain *.gif animation
     getamountofgif=`ls -1 *.gif 2>/dev/null | wc -l`
