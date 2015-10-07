@@ -153,45 +153,45 @@ _dir_creation()
     cd "$workingpath"
     
     if [ -d "$workingpath/$folder_cache" ]; then
-    echo "${Green}* ${Off} $folder_cache already exist"
+    echo "* $folder_cache found" 
     else
+    echo "${Green}*${Off} creating folder: $folder_cache"
     mkdir -p "$workingpath"/"$folder_cache"
-    echo "${Yellow}==> ${Blue} creating: ${Off} $folder_cache"
     fi
 
     if [ -d "$workingpath/$folder_lang" ]; then
-    echo "${Green}* ${Off} $folder_lang already exist"
+    echo "* $folder_lang found" 
     else
+    echo "${Green}*${Off} creating folder: $folder_lang"
     mkdir -p "$workingpath"/"$folder_lang"
-    echo "${Yellow}==> ${Blue} creating: ${Off} $folder_lang"
     fi
 
     if [ -d "$workingpath/$folder_lowres" ]; then
-    echo "${Green}* ${Off} $folder_lowres already exist"
+    echo "* $folder_lowres found" 
     else
+    echo "${Green}*${Off} creating folder: $folder_lowres/$folder_gfxonly"
     mkdir -p "$workingpath"/"$folder_lowres"/"$folder_gfxonly"
-    echo "${Yellow}==> ${Blue} creating: ${Off} $folder_lowres/$folder_gfxonly"
     fi
 
     if [ -d "$workingpath/$folder_hires" ]; then
-    echo "${Green}* ${Off} $folder_hires already exist"
+    echo "* $folder_hires found" 
     else
+    echo "${Green}*${Off} creating folder: $folder_hires/$folder_gfxonly"
     mkdir -p "$workingpath"/"$folder_hires"/"$folder_gfxonly"
-    echo "${Yellow}==> ${Blue} creating: ${Off} $folder_hires/$folder_gfxonly"
     fi
 
     if [ -d "$workingpath/$folder_backup" ]; then
-    echo "${Green}* ${Off} $folder_backup already exist"
+    echo "* $folder_backup found" 
     else
+    echo "${Green}*${Off} creating folder: $folder_backup"
     mkdir -p "$workingpath"/"$folder_backup"
-    echo "${Yellow}==> ${Blue} creating: ${Off} $folder_backup"
     fi
     
     if [ -d "$workingpath/$folder_wip" ]; then
-    echo "${Green}* ${Off} $folder_wip already exist"
+    echo "* $folder_wip found" 
     else
+    echo "${Green}*${Off} creating folder: $folder_wip"
     mkdir -p "$workingpath"/"$folder_wip"
-    echo "${Yellow}==> ${Blue} creating: ${Off} $folder_wip"
     fi
     
     echo ""
@@ -597,10 +597,10 @@ _create_singlepage()
     # generating folder:
     cd "$workingpath"
     if [ -d "$workingpath/$folder_lowres/$folder_singlepage" ]; then
-    echo "${Green}* ${Off} $folder_lowres/$folder_singlepage already exist"
+    echo "${Green}* $folder_lowres/$folder_singlepage found" 
     else
     mkdir -p "$workingpath"/"$folder_lowres"/"$folder_singlepage"
-    echo "${Yellow}==> ${Blue} creating: ${Off} $folder_lowres/$folder_singlepage"
+    echo "${Green}*${Off} creating folder: $folder_lowres/$folder_singlepage"
     fi
     
     echo ""
@@ -625,10 +625,10 @@ _create_zip_collection()
         cd "$workingpath"
         
         if [ -d "$workingpath/$folder_zip" ]; then
-        echo "${Green}* ${Off} $folder_zip already exist"
+        echo "* $folder_zip found" 
         else
         mkdir -p "$workingpath"/"$folder_zip"
-        echo "${Yellow}==> ${Blue} creating: ${Off} $folder_zip"
+        echo "${Green}*${Off} creating folder: $folder_zip"
         fi
         
         # find the project name, thanks vignette/cover filename.
