@@ -537,9 +537,6 @@ _create_singlepage_work()
     # clean folder, remove trailing / character
     langdir="${langdir%%?}"
 
-    # verbose, a langage was found
-    echo " ${Yellow}[$langdir] ${Off}"
-
     # repositioning the main folder
     cd "$workingpath"
 
@@ -556,25 +553,11 @@ _create_singlepage_work()
 
     # Final low-res singlepage with cache for speed:
     if diff "$workingpath"/"$folder_lowres"/"$folder_singlepage"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" >/dev/null ; then
-    #no
-        # if an update happen in the code, force regeneration of XXL image for each lang.
-        #if [ $gfx_need_regen = 1 ]; then
-
-        #echo " ${Yellow}==> ${Blue}$langdir_$jpgfile${Green} Regenerating ${Off}"
-
-        #montage -mode concatenate -tile 1x *P??.png -colorspace sRGB -quality 92% -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
-
-        #cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_lowres"/"$folder_singlepage"/"$langdir"_"$jpgfile"
-
-        #else
-
-        echo " ${Yellow}==> ${Blue}[$langdir_$jpgfile]${Off} is up-to-date."
-
-        #fi
-
+        #no
+        echo "${Yellow}[$langdir] ${Off} ${Blue} $langdir_$jpgfile ${Off} is up-to-date."
     else
-    #yes
-        echo " ${Yellow}==> ${Blue}$langdir_$jpgfile${Green} Regenerating ${Off}"
+        #yes
+        echo "${Yellow}[$langdir] ${Off} ${Blue} $langdir_$jpgfile ${Green} Regenerating ${Off}"
 
         montage -mode concatenate -tile 1x *P??.png -colorspace sRGB -quality 92% -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
 
