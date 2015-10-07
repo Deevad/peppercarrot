@@ -123,29 +123,30 @@ _setup()
     
     if echo "$projectname" | grep -q '_ep01';
     then
-    echo "${Yellow}SETUP: Episode 1 ${Off}"
+    echo "${Yellow} [SETUP]${Off} Episode 1 mode"
     singlepage_generation=0
     cropping_pages=0
     
     elif echo "$projectname" | grep -q '_ep02';
     then
-    echo "${Yellow}SETUP: Episode 2 ${Off}"
+    echo "${Yellow} [SETUP]${Off} Episode 2 mode"
     singlepage_generation=0
     cropping_pages=0
     
     elif echo "$projectname" | grep -q 'New';
     then
-    echo "${Yellow}SETUP: New ${Off}"
+    echo "${Yellow} [SETUP]${Off} New episode mode"
     singlepage_generation=1
     cropping_pages=1
 
     else 
-    echo "${Yellow}SETUP: Normal ${Off}"
+    echo "${Yellow} [SETUP]${Off} Normal mode"
     singlepage_generation=1
     cropping_pages=1
     fi
     
-    echo "${Yellow}=-=-=-=-=-=-= ${Off}"
+    echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+
 
 }
 
@@ -407,16 +408,19 @@ _update_gfx()
     getamountofgif=`ls -1 *.gif 2&>/dev/null | wc -l`
     if [ $getamountofgif != 0 ]
     then 
-    echo "${Yellow} Gif: Processing the gif files in project root.${Off}"
-    echo "${Yellow} =-=-=-=-=-=-=-=-=-=[GIF]=-=-=-=-=-=-=-=-=-=-=-${Off}"
+
+    echo "${Yellow} [GFX]${Off} render *.gif"
+    echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+
     export -f _update_gfx_gif_work
     ls -1 *.gif | parallel _update_gfx_gif_work "{}"
+
     fi
     
-    
     echo ""
-    echo "${Yellow} GFX: Scanning for *.kra pages to update the cache.${Off}"
-    echo "${Yellow} =-=-=-=-=-=-=-=-=-=-=-[KRA]-=-=-=-=-=-=-=-=-=-=-=-${Off}"
+
+    echo "${Yellow} [GFX]${Off} render *.kra"
+    echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
     
     cd "$workingpath"
     
@@ -521,8 +525,8 @@ _update_lang()
     # gfx are stable and doesn't change a lot.
     
     echo ""
-    echo "${Yellow} [LANG-MAIN] : Scanning for subdirectories.${Off}"
-    echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+    echo "${Yellow} [LANG] ${Off}"
+    echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
     
     export -f _update_lang_work
     cd "$workingpath"/"$folder_lang"/ && ls -1d */ | parallel _update_lang_work "{}"
@@ -579,8 +583,8 @@ _create_singlepage()
     fi
     
     echo ""
-    echo "${Yellow} SINGLEPAGE : Gluing work.${Off}"
-    echo "${Yellow} =-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+    echo "${Yellow} [SINGLEPAGE]${Off}"
+    echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
     
     export -f _create_singlepage_work
     cd "$workingpath"/"$folder_lang"/ && ls -1d */ | parallel _create_singlepage_work "{}"
@@ -591,8 +595,8 @@ _create_zip_collection()
 {
     # Method to create pack of zips for the website, ready to upload.
     echo ""
-    echo "${Yellow} ZIP Packing : archive building for the web.${Off}"
-    echo "${Yellow} =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+    echo "${Yellow}[ZIP]${Off}"
+    echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
 
     # do we really need to repack if nothing changed ?
     if [ $gfx_need_regen = 1 ]; then
