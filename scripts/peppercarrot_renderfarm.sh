@@ -278,11 +278,11 @@ _update_gfx_kra_work()
     # compare if kra file changed
     if diff "$workingpath"/"$krafile" "$workingpath"/"$folder_cache"/"$krafile" &>/dev/null ; then
     #no
-        echo " ${Yellow}==> ${Blue}[$krafile]${Off} is up-to-date."
+        echo " ${Yellow}==> ${Blue} $krafile ${Off} is up-to-date."
 
     else
         #yes
-        echo " ${Yellow}==> ${Green}[$krafile] changed ==> Regenerating with Krita ${Off}"
+        echo " ${Green}==> ${Blue} $krafile ${Green} changed ==> Regenerating with Krita ${Off}"
 
         #update token
         gfx_need_regen=1
@@ -416,8 +416,6 @@ _update_gfx()
     ls -1 *.gif | parallel _update_gfx_gif_work "{}"
 
     fi
-    
-    echo ""
 
     echo "${Yellow} [GFX]${Off} render *.kra"
     echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
@@ -436,20 +434,17 @@ _update_lang_work()
     # clean folder, remove trailing / character
     langdir="${langdir%%?}"
 
-    # verbose, a langage was found
-    echo " ${Yellow}[$langdir] ${Off}"
-
     # ensure to reset on folder_lang on the start of the loop
     cd "$workingpath"/"$folder_lang"/
 
     # compare if langage folder changed compare to the version we cached in cache/lang/lang
     if diff -r "$workingpath"/"$folder_lang"/"$langdir" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir" &>/dev/null ; then
         #no
-        echo " ${Yellow}==> ${Blue}[$langdir] ${Off} folder is up-to-date."
+        echo "${Yellow}[$langdir] ${Off} folder is up-to-date."
 
     else
         #yes
-        echo " ${Yellow}==> ${Blue}[$langdir] new or changed ${Green} Regenerating ${Off}"
+        echo "${Green}[$langdir] new or changed, regenerating ${Off}"
 
         #update token
         gfx_need_regen=1
@@ -576,10 +571,10 @@ _create_singlepage()
     # generating folder:
     cd "$workingpath"
     if [ -d "$workingpath/$folder_lowres/$folder_singlepage" ]; then
-    echo "${Green}* $folder_lowres/$folder_singlepage found" 
+    echo "" 
     else
     mkdir -p "$workingpath"/"$folder_lowres"/"$folder_singlepage"
-    echo "${Green}* creating folder: $folder_lowres/$folder_singlepage"
+    echo "${Green}* creating folder: $folder_lowres/$folder_singlepage ${Off}"
     fi
     
     echo ""
@@ -659,6 +654,7 @@ _update_lang
     
 echo ""
 echo "   ${White}${BlueBG}       Task for $projectname done.        ${Off}"
+echo ""
 
     if [ $svg_need_commit = 1 ]; then
         echo ""
