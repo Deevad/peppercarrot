@@ -119,32 +119,33 @@ _setup()
 {
     cd "$workingpath"
     
-    # Switch for special rules per episodes, based on a pattern found on main folder name
-    # Used for ep01 and ep02 ( big picture ) and 'New' for new episodes
+    # Setup : load special rules depending on folder name
+    
     if echo "$projectname" | grep -q '_ep01';
     then
-    echo "${Green}* Loading ep01 setup ${Off}"
+    echo "${Yellow}SETUP: Episode 1 ${Off}"
     singlepage_generation=0
     cropping_pages=0
     
     elif echo "$projectname" | grep -q '_ep02';
     then
-    echo "${Green}* Loading ep02 setup ${Off}"
+    echo "${Yellow}SETUP: Episode 2 ${Off}"
     singlepage_generation=0
     cropping_pages=0
     
     elif echo "$projectname" | grep -q 'New';
     then
-    echo "${Purple}* Loading New episode setup.${Off}"
+    echo "${Yellow}SETUP: New ${Off}"
     singlepage_generation=1
     cropping_pages=1
-    
+
     else 
-    echo "${Green}* Loading normal setup. ${Off}"
-		singlepage_generation=1
+    echo "${Yellow}SETUP: Normal ${Off}"
+    singlepage_generation=1
     cropping_pages=1
-    
     fi
+    
+    echo "${Yellow}=-=-=-=-=-=-= ${Off}"
 
 }
 
