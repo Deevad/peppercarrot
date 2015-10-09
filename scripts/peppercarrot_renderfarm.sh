@@ -567,6 +567,10 @@ _create_singlepage()
 {
     # Method to create a long strip
     # for reshare, or single image viewer like deviantArt
+      
+    echo ""
+    echo "${Yellow} [SINGLEPAGE]${Off}"
+    echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
     
     # generating folder:
     cd "$workingpath"
@@ -576,10 +580,6 @@ _create_singlepage()
     mkdir -p "$workingpath"/"$folder_lowres"/"$folder_singlepage"
     echo "${Green}* creating folder: $folder_lowres/$folder_singlepage ${Off}"
     fi
-    
-    echo ""
-    echo "${Yellow} [SINGLEPAGE]${Off}"
-    echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
     
     export -f _create_singlepage_work
     cd "$workingpath"/"$folder_lang"/ && ls -1d */ | parallel _create_singlepage_work "{}"
