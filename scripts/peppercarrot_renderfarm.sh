@@ -204,6 +204,48 @@ _dir_creation()
   echo ""
 }
 
+_check_svg()
+{
+  
+  # Position cursor inside the lang
+  cd "$workingpath"/"$folder_lang"/
+  
+  for langdir in */; do
+  
+    # Clean lang folder name, remove trailing / character
+    langdir="${langdir%%?}"
+    
+    # Position cursor inside the current lang
+    cd "$workingpath"/"$folder_lang"/"$langdir"/
+
+    # New loop : we process the SVG of the current lang dir
+    for svgfile in *.svg; do
+
+      # Sanify test for SVG coming from Inkscape on Windows, writing problematic path:
+      if grep -q 'xlink:href=".*.\\gfx_' "$svgfile"; then
+        echo "${Yellow} [SVG CHECK]${Off}"
+        echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+        echo " ==> [svg] $svgfile detected. ${Off}"
+        echo "${Red} (-)"
+        grep 'xlink:href="' "$svgfile"
+        echo "${Off}"
+        
+        # run sed twice in case of two images embed, rare but might happen
+        sed -i 's/xlink:href=".*.\\gfx/xlink:href="..\/gfx/g' "$svgfile"
+        sed -i 's/xlink:href=".*.\\gfx/xlink:href="..\/gfx/g' "$svgfile"
+        
+        echo "${Green} (+)"
+        grep 'xlink:href="' "$svgfile"
+        echo "${Off}"
+        
+        # Update token to trigger a reminder at the end of script; SVG were auto-modified.
+        export svg_need_commit=1
+      fi
+
+    done
+  done
+}
+
 _update_gfx_gif_work()
 {
   giffile=$1
@@ -410,29 +452,6 @@ _update_lang_work()
       # Verbose for Inkscape feedback
       echo " ${Green}    [$langdir] $svgfile rendered ${Off}"
 
-      # Sanify test for SVG coming from Inkscape on Windows, writing problematic path:
-      if grep -q 'xlink:href=".*.\\gfx_' "$svgfile"; then
-        echo "${Green} ==> Auto-fixing $svgfile${Off}"
-        echo "${Red} (-)"
-        grep 'xlink:href="' "$svgfile"
-        echo "${Off}"
-        
-        # run sed twice in case of two images embed, rare but might happen
-        sed -i 's/xlink:href=".*.\\gfx/xlink:href="..\/gfx/g' "$svgfile"
-        sed -i 's/xlink:href=".*.\\gfx/xlink:href="..\/gfx/g' "$svgfile"
-        
-        echo "${Green} (+)"
-        grep 'xlink:href="' "$svgfile"
-        echo "${Off}"
-        
-        # Copying the change everywhere
-        cp "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile"
-        cp "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"/"$svgfile"
-        
-        # Update token to trigger a reminder at the end of script; SVG were auto-modified.
-        export svg_need_commit=1
-      fi
-
       # Final hi-res PNG print with lang prefix
       inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
 
@@ -576,6 +595,7 @@ renderfarm_runtime_start=$(date +"%s")
 _display_ui
 _setup
 _dir_creation
+_check_svg
 _update_gfx
 _update_lang
 
