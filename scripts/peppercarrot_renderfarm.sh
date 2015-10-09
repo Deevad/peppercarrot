@@ -268,7 +268,7 @@ _check_svg()
 
       # Sanify test for SVG coming from Inkscape on Windows, writing problematic path:
       if grep -q 'xlink:href=".*.\\gfx_' "$svgfile"; then
-        echo "${Green} ==> [fix] $svgfile ${Off}"
+        echo "${Green} ==> [fix] [$langdir] $svgfile ${Off}"
         echo "${Red}      (-)"
         grep 'xlink:href="' "$svgfile"
         echo "${Off}"
@@ -304,28 +304,27 @@ _update_gfx_gif_work()
 
     # Update cache
     cp "$workingpath"/"$giffile" "$workingpath"/"$folder_cache"/"$giffile"
+    
+    # Ensure to reset on folder_lang on the start of the loop
     cd "$workingpath"/"$folder_lang"/
 
     for langdir in */;
     do
       # Clean folder, remove trailing / character
       langdir="${langdir%%?}"
+      
+      # Prevent missing lang folder at a first run
+      mkdir -p "$workingpath"/"$folder_cache"/"$langdir"
 
-      # Spread the gfx gif as it is in all the pages (gifs have no translations)
+      # Spread the Gif as it is in all the pages (gifs have no translations)
       cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_lowres"/"$langdir"_"$giffile"
       cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_lowres"/"$folder_gfxonly"/gfx_"$giffile"
       cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_hires"/"$langdir"_"$giffile"
       cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_hires"/"$folder_gfxonly"/gfx_"$giffile"
 
-      # Ensure to reset on folder_lang on the start of the loop
-      cd "$workingpath"/"$folder_lang"/
-
-      # Convert to PNG , for being in the singlepage loop (later) this version needs a padding top and botton.
-      gifframe1="$workingpath"/"$folder_cache"/"$giffile"[0]
-      convert $gifframe1 -bordercolor white -border 0x20 -colorspace sRGB "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
-
       # Copy lowres PNG gfx for lang proxy SVG
-      convert $gifframe1 -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lang"/gfx_"$pngfile"
+      gifframe1="$workingpath"/"$folder_cache"/"$giffile"[0]
+      convert "$gifframe1" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lang"/gfx_"$pngfile"
       
       # Create a dummy file token to indicate what lang where changed
       touch "$workingpath"/"$folder_cache"/"$langdir"/need_render
@@ -346,6 +345,13 @@ _update_gfx_kra_work()
 
   # Read the checksum of *.kra file
   md5read="`md5sum $krafile`"
+  
+  # Avoid grep to fail if no file found
+  if [ -f "$workingpath"/"$folder_cache"/"$txtfile" ]; then
+    true
+  else
+    touch "$workingpath"/"$folder_cache"/"$txtfile"
+  fi
   
   # Compare if actual *.kra checksum is similar to the previous one recorded on txtfile
   if grep -q "$md5read" "$workingpath"/"$folder_cache"/"$txtfile"; then
@@ -374,13 +380,10 @@ _update_gfx_kra_work()
     convert "$workingpath"/"$folder_cache"/gfx_"$pngfile" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lowres"/"$folder_gfxonly"/gfx_"$jpgfile"
 
     # Copy a backup of kra
-    cp "$workingpath"/"$folder_cache"/"$krafile" "$workingpath"/"$folder_backup"/"$version"_"$krafile"
+    cp "$workingpath"/"$krafile" "$workingpath"/"$folder_backup"/"$version"_"$krafile"
 
     # Generate WIP jpg : full res, JPG, 92%, no lang
     convert "$workingpath"/"$folder_cache"/gfx_"$pngfile" -colorspace sRGB -background white -alpha remove -quality 92% "$workingpath"/"$folder_wip"/"$jpgfileversionning"
-
-    # Update lang of selected changed file
-    echo "${Green}     Rendering now linked translations: ${Off}"
 
     cd "$workingpath"/"$folder_lang"/
 
@@ -388,55 +391,62 @@ _update_gfx_kra_work()
     
       # Clean folder, remove trailing / character
       langdir="${langdir%%?}"
-
-      # Ensure to reset on folder_lang on the start of the loop
-      cd "$workingpath"/"$folder_lang"/
-
-      # Position cursor inside the current cache/lang
-      cd "$workingpath"/"$folder_cache"/"$langdir"/
       
-      # Create a dummy file token to indicate what lang where changed
-      touch "$workingpath"/"$folder_cache"/"$langdir"/need_render
-
-      # Verbose
-      echo " ${Green}    ==> [$langdir] $svgfile rendered ${Off}"
-
-      # Do we have a SVG file with same name as our KRA ?
-      if [ -d "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" ]; then
-        # Yes. Final hi-res PNG print with lang prefix
-        inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
-      else
-        # No. Transmit the gfx-only version high res. Muted page exist.
-        cp "$workingpath"/"$folder_cache"/gfx_"$pngfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"          
-      fi
-
-      # Final hi-res PNG print with lang prefix
-      inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
-
-      # Copy PNG full-res to proper hires folder
-      cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" "$workingpath"/"$folder_hires"/"$langdir"_"$pngfile"
-
-      # Generate WIP (Work-in-Progress) jpg : full res, JPG, 92%, no lang. For keeping track later of modification in WIP folder.
-      convert "$workingpath"/"$folder_cache"/gfx_"$pngfile" -colorspace sRGB -background white -alpha remove -quality 92% "$workingpath"/"$folder_wip"/"$jpgfileversionning"
-
-      # Crop our hi-res PNG pages for better online web layout
-      if [ $cropping_pages = 1 ]; then
+      # Only work if the lang directory already exist on cache, to fix a bug at first launch
+      if [ -d "$workingpath"/"$folder_cache"/"$langdir" ]; then 
       
-        # Rule to exclude cover from being cropped :
-        if echo "$pngfile" | grep -q 'P[0-9][0-9]' ; then
-          convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -chop 0x70 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+        # Update lang of selected changed file
+        echo "${Green}     Rendering now linked translations: ${Off}"
+      
+        # Ensure to reset on folder_lang on the start of the loop
+        cd "$workingpath"/"$folder_lang"/
+
+        # Position cursor inside the current cache/lang
+        cd "$workingpath"/"$folder_cache"/"$langdir"/
+        
+        # Create a dummy file token to indicate what lang where changed
+        touch "$workingpath"/"$folder_cache"/"$langdir"/need_render
+
+        # Verbose
+        echo " ${Green}    ==> [$langdir] $svgfile rendered ${Off}"
+
+        # Do we have a SVG file with same name as our KRA ?
+        if [ -d "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" ]; then
+          # Yes. Final hi-res PNG print with lang prefix
+          inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
         else
-          echo "* Cover artwork = not crop."
+          # No. Transmit the gfx-only version high res. Muted page exist.
+          cp "$workingpath"/"$folder_cache"/gfx_"$pngfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"          
         fi
+
+        # Final hi-res PNG print with lang prefix
+        inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+
+        # Copy PNG full-res to proper hires folder
+        cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" "$workingpath"/"$folder_hires"/"$langdir"_"$pngfile"
+
+        # Generate WIP (Work-in-Progress) jpg : full res, JPG, 92%, no lang. For keeping track later of modification in WIP folder.
+        convert "$workingpath"/"$folder_cache"/gfx_"$pngfile" -colorspace sRGB -background white -alpha remove -quality 92% "$workingpath"/"$folder_wip"/"$jpgfileversionning"
+
+        # Crop our hi-res PNG pages for better online web layout
+        if [ $cropping_pages = 1 ]; then
+        
+          # Rule to exclude cover from being cropped :
+          if echo "$pngfile" | grep -q 'P[0-9][0-9]' ; then
+            convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -chop 0x70 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+          else
+            echo "* Cover artwork = not crop."
+          fi
+          
+        fi
+
+        # Final low-res JPG for online with lang prefix, unsharp and correct quality, generated on cache
+        convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -background white -alpha remove -quality 92% "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
+
+        # Copy the final JPG to proper lowres folder
+        cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_lowres"/"$langdir"_"$jpgfile"
         
       fi
-
-      # Final low-res JPG for online with lang prefix, unsharp and correct quality, generated on cache
-      convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -background white -alpha remove -quality 92% "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
-
-      # Copy the final JPG to proper lowres folder
-      cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_lowres"/"$langdir"_"$jpgfile"
-
     done
   fi
 }
@@ -566,6 +576,20 @@ _create_singlepage_work()
 
     # Clean folder, remove trailing / character
     langdir="${langdir%%?}"
+    
+    # If project contain *.gif , include them in the loop for single page, but as static PNG
+    cd "$workingpath"
+    getamountofgif=`ls -1 *.gif 2>/dev/null | wc -l`
+    if [ $getamountofgif != 0 ]; then 
+      for giffile in *.gif; do
+      pngfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".png"
+      gifframe1="$workingpath"/"$folder_cache"/"$giffile"[0]
+      convert "$gifframe1" -bordercolor white -border 0x20 -colorspace sRGB "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+      done
+    fi
+    
+    # Repositioning to the cache/lang folder
+    cd "$workingpath"/"$folder_cache"/"$langdir"/
         
     # if dummy file token exist in lang folder cached, we need to re-render then clean dummy.
     if [ -f "$workingpath"/"$folder_cache"/"$langdir"/need_render ]; then
