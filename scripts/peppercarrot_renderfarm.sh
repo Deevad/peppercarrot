@@ -106,12 +106,13 @@ clear
 _display_ui()
 {
   echo ""
-  echo "   ${White}${BlueBG}            [ Pepper&Carrot Manager  ]              ${Off}"
-  echo "   ${White}${BlueBG}                 version $scriptversion                        ${Off}"
-  echo "   ${White}${BlueBG}                                                    ${Off}"
+  echo " ${White}${BlueBG}                                                                          ${Off}"
+  echo " ${White}${BlueBG}                       -= Pepper&Carrot Renferfarm =-                     ${Off}"
+  echo " ${White}${BlueBG}                                                                          ${Off}"
   echo ""
-  echo " projectname: $projectname "
-  echo " workingpath: $workingpath "
+  echo " * version: $scriptversion "
+  echo " * projectname: $projectname "
+  echo " * workingpath: $workingpath "
   echo ""
 }
 
@@ -143,7 +144,7 @@ _setup()
     
   fi
   
-  echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+  echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
 }
 
 _dir_creation()
@@ -151,42 +152,42 @@ _dir_creation()
   cd "$workingpath"
   
   if [ -d "$workingpath/$folder_cache" ]; then
-    echo "* $folder_cache found" 
+    echo " * $folder_cache found" 
   else
     echo "${Green}* creating folder: $folder_cache ${Off}"
     mkdir -p "$workingpath"/"$folder_cache"
   fi
 
   if [ -d "$workingpath/$folder_lang" ]; then
-    echo "* $folder_lang found" 
+    echo " * $folder_lang found" 
   else
     echo "${Green}* creating folder: $folder_lang ${Off}"
     mkdir -p "$workingpath"/"$folder_lang"
   fi
 
   if [ -d "$workingpath/$folder_lowres" ]; then
-    echo "* $folder_lowres found" 
+    echo " * $folder_lowres found" 
   else
     echo "${Green}* creating folder: $folder_lowres/$folder_gfxonly ${Off}"
     mkdir -p "$workingpath"/"$folder_lowres"/"$folder_gfxonly"
   fi
 
   if [ -d "$workingpath/$folder_hires" ]; then
-    echo "* $folder_hires found" 
+    echo " * $folder_hires found" 
   else
     echo "${Green}* creating folder: $folder_hires/$folder_gfxonly ${Off}"
     mkdir -p "$workingpath"/"$folder_hires"/"$folder_gfxonly"
   fi
 
   if [ -d "$workingpath/$folder_backup" ]; then
-    echo "* $folder_backup found" 
+    echo " * $folder_backup found" 
   else
     echo "${Green}* creating folder: $folder_backup ${Off}"
     mkdir -p "$workingpath"/"$folder_backup"
   fi
   
   if [ -d "$workingpath/$folder_wip" ]; then
-    echo "* $folder_wip found" 
+    echo " * $folder_wip found" 
   else
     echo "${Green}* creating folder: $folder_wip ${Off}"
     mkdir -p "$workingpath"/"$folder_wip"
@@ -194,7 +195,7 @@ _dir_creation()
   
   if [ $singlepage_generation = 1 ]; then
     if [ -d "$workingpath/$folder_lowres/$folder_singlepage" ]; then
-      echo "* $folder_singlepage found" 
+      echo " * $folder_singlepage found" 
     else
       echo "${Green}* creating folder: $folder_lowres/$folder_singlepage ${Off}"
       mkdir -p "$workingpath"/"$folder_lowres"/"$folder_singlepage"
@@ -224,7 +225,7 @@ _check_svg()
       # Sanify test for SVG coming from Inkscape on Windows, writing problematic path:
       if grep -q 'xlink:href=".*.\\gfx_' "$svgfile"; then
         echo "${Yellow} [SVG CHECK]${Off}"
-        echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+        echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
         echo " ==> [svg] $svgfile detected. ${Off}"
         echo "${Red} (-)"
         grep 'xlink:href="' "$svgfile"
@@ -399,7 +400,7 @@ _update_gfx()
   # Only file changed are reprocessed thanks to the folder cache
 
   echo "${Yellow} [GFX]${Off}"
-  echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+  echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
   
   # Project should contain *.kra artworks anyway
   cd "$workingpath"
@@ -489,7 +490,7 @@ _update_lang()
   
   echo ""
   echo "${Yellow} [LANG] ${Off}"
-  echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+  echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
 
   export -f _update_lang_work
   cd "$workingpath"/"$folder_lang"/ && ls -1d */ | parallel _update_lang_work "{}"
@@ -544,7 +545,7 @@ _create_singlepage()
     
   echo ""
   echo "${Yellow} [SINGLEPAGE]${Off}"
-  echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+  echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
   
   export -f _create_singlepage_work
   cd "$workingpath"/"$folder_lang"/ && ls -1d */ | parallel _create_singlepage_work "{}"
@@ -555,7 +556,7 @@ _create_zip_collection()
   # Method to create pack of zips for the website, ready to upload.
   echo ""
   echo "${Yellow}[ZIP]${Off}"
-  echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+  echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
 
   # Do we really need to repack if nothing changed ?
   if [ $gfx_need_regen = 1 ]; then
@@ -614,22 +615,22 @@ diff_runtime=$(($renderfarm_runtime_end-$renderfarm_runtime_start))
 
 # End User Interface messages
 echo ""
-echo "   ${White}${BlueBG}           $projectname rendered in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec.            ${Off}"
-echo ""
+echo "${Blue} [END]${Off}"
+echo "${Blue} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+echo "${Blue} * $projectname rendered in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec. ${Off}"
 
 # Reminder in case of SVG auto-modified
 if [ $svg_need_commit = 1 ]; then
-  echo ""
-  echo " ${Red}/!\ WARNING  /!\ ${Off}"
-  echo " ${Yellow} Problematic SVG were found and autofixed.${Off}"
-  echo ""
+  echo "${Blue} * SVG with wrong path were found and autofixed. ${Off} "
 fi
 
+echo ""
+
 # Notification for system when out-of-focus
-notify-send "$projectname rendered in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec." -t 5000
+notify-send "Pepper&Carrot Renderfarm" "$projectname rendered in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec."
 
 # Task is executed inside a terminal
 # This line prevent terminal windows to be closed
 # Necessary to read log later
-echo -n "Press [Enter] to exit"
+echo -n " Press [Enter] to exit"
 read end
