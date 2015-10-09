@@ -158,13 +158,6 @@ _dir_creation()
     mkdir -p "$workingpath"/"$folder_cache"
   fi
 
-  if [ -d "$workingpath/$folder_lang" ]; then
-    echo " * $folder_lang found" 
-  else
-    echo "${Green}* creating folder: $folder_lang ${Off}"
-    mkdir -p "$workingpath"/"$folder_lang"
-  fi
-
   if [ -d "$workingpath/$folder_lowres" ]; then
     echo " * $folder_lowres found" 
   else
@@ -202,11 +195,62 @@ _dir_creation()
     fi
   fi
   
-  echo ""
+  if [ -d "$workingpath/$folder_lang" ]; then
+    echo " * $folder_lang found" 
+  else
+    echo "${Green}* creating folder: $folder_lang ${Off}"
+    mkdir -p "$workingpath"/"$folder_lang"
+  fi
+
 }
 
 _check_svg()
 {
+  
+  # Check if Git is installed on the machine
+  isgitinstalled=`type -t git | wc -l`
+  
+  if [ $isgitinstalled = 0 ]; then 
+    echo "${Green} * Please install Git ${Off}"
+  else
+  
+   echo " * Git found"
+   
+    # Position cursor inside the lang
+    cd "$workingpath"/"$folder_lang"/
+    
+    # Check for .git folder
+    if [ -d "$workingpath"/"$folder_lang"/.git ]; then
+          
+      # refresh repo to get remote informations
+      git remote update
+      
+      # git tools
+      gitlocal=$(git rev-parse @)
+      gitremote=$(git rev-parse @{u})
+      gitbase=$(git merge-base @ @{u})
+      
+      # start git update smart decisions
+      if [ $gitlocal = $gitremote ]; then
+        echo " * $folder_lang is up-to-date"
+          
+      elif [ $gitlocal = $gitbase ]; then
+        echo "${Blue} * $folder_lang is outdated${Off}"
+        echo "${Green} ==> [git] git pull ${Off}"
+        git pull
+                  
+      elif [ $gitremote = $gitbase ]; then
+        echo "${Purple} * $folder_lang contains commit non pushed${Off}"
+          
+      else
+        echo "${Red} * $folder_lang error: diverging repositories${Off}"
+      fi
+        
+    else
+      echo " * $folder_lang is not a Git repository ${Off}"
+    fi
+  
+  fi
   
   # Position cursor inside the lang
   cd "$workingpath"/"$folder_lang"/
@@ -224,10 +268,8 @@ _check_svg()
 
       # Sanify test for SVG coming from Inkscape on Windows, writing problematic path:
       if grep -q 'xlink:href=".*.\\gfx_' "$svgfile"; then
-        echo "${Yellow} [SVG CHECK]${Off}"
-        echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
-        echo " ==> [svg] $svgfile detected. ${Off}"
-        echo "${Red} (-)"
+        echo "${Green} ==> [fix] $svgfile ${Off}"
+        echo "${Red}      (-)"
         grep 'xlink:href="' "$svgfile"
         echo "${Off}"
         
@@ -235,7 +277,7 @@ _check_svg()
         sed -i 's/xlink:href=".*.\\gfx/xlink:href="..\/gfx/g' "$svgfile"
         sed -i 's/xlink:href=".*.\\gfx/xlink:href="..\/gfx/g' "$svgfile"
         
-        echo "${Green} (+)"
+        echo "${Green}      (+)"
         grep 'xlink:href="' "$svgfile"
         echo "${Off}"
         
@@ -245,6 +287,8 @@ _check_svg()
 
     done
   done
+  
+  echo ""
 }
 
 _update_gfx_gif_work()
@@ -615,13 +659,11 @@ diff_runtime=$(($renderfarm_runtime_end-$renderfarm_runtime_start))
 
 # End User Interface messages
 echo ""
-echo "${Blue} [END]${Off}"
-echo "${Blue} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
-echo "${Blue} * $projectname rendered in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec. ${Off}"
+echo " * $projectname rendered in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec."
 
 # Reminder in case of SVG auto-modified
 if [ $svg_need_commit = 1 ]; then
-  echo "${Blue} * SVG with wrong path were found and autofixed. ${Off} "
+  echo " * SVG with wrong path were found and autofixed."
 fi
 
 echo ""
