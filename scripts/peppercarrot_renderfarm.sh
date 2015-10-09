@@ -338,22 +338,26 @@ _update_gfx_kra_work()
 {
   krafile=$1
   cd "$workingpath"
+  txtfile=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')".txt"
   pngfile=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')".png"
   jpgfile=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')".jpg"
   svgfile=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')".svg"
   jpgfileversionning=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')_$version".jpg"
 
-  # Compare if kra file changed
-  if diff "$workingpath"/"$krafile" "$workingpath"/"$folder_cache"/"$krafile" &>/dev/null ; then
+  # Read the checksum of *.kra file
+  md5read="`md5sum $krafile`"
+  
+  # Compare if actual *.kra checksum is similar to the previous one recorded on txtfile
+  if grep -q "$md5read" "$workingpath"/"$folder_cache"/"$txtfile"; then
     echo " ==> [kra] $krafile file is up-to-date."
   else
     echo "${Green} ==> [kra] $krafile is new or modified, rendered. ${Off}"
 
-    # Duplicate *.kra to cache
-    cp "$workingpath"/"$krafile" "$workingpath"/"$folder_cache"/"$krafile"
-
+    # Update the cache with a new version
+    md5sum "$krafile" > "$workingpath"/"$folder_cache"/"$txtfile"
+    
     # Generate PNG hi-res in cache
-    krita --export "$workingpath"/"$folder_cache"/"$krafile" --export-filename "$workingpath"/"$folder_cache"/gfx_"$pngfile"
+    krita --export "$workingpath"/"$krafile" --export-filename "$workingpath"/"$folder_cache"/gfx_"$pngfile"
 
     # Check if we are not processing the cover/thumbnail, comparing with a mask pattern.
     if [ "$krafile" = *_E??.kra ]; then
