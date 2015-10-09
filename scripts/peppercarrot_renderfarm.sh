@@ -108,7 +108,7 @@ _display_ui()
   echo ""
   echo "   ${White}${BlueBG}            [ Pepper&Carrot Manager  ]              ${Off}"
   echo "   ${White}${BlueBG}                 version $scriptversion                        ${Off}"
-  echo "   ${White}${BlueBG}                 by David Revoy                     ${Off}"
+  echo "   ${White}${BlueBG}                                                    ${Off}"
   echo ""
   echo " projectname: $projectname "
   echo " workingpath: $workingpath "
@@ -587,6 +587,9 @@ _create_zip_collection()
   fi
 }
 
+# Runtime counter: start
+renderfarm_runtime_start=$(date +"%s")
+
 # Execute
 _display_ui
 _setup
@@ -603,9 +606,13 @@ if [ $zip_generation = 1 ]; then
   _create_zip_collection
 fi
 
+# Runtime counter: end and math
+renderfarm_runtime_end=$(date +"%s")
+diff_runtime=$(($renderfarm_runtime_end-$renderfarm_runtime_start))
+
 # End User Interface messages
 echo ""
-echo "   ${White}${BlueBG}       Task for $projectname done.        ${Off}"
+echo "   ${White}${BlueBG}           $projectname rendered in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec.            ${Off}"
 echo ""
 
 # Reminder in case of SVG auto-modified
@@ -617,7 +624,7 @@ if [ $svg_need_commit = 1 ]; then
 fi
 
 # Notification for system when out-of-focus
-notify-send "Task for $projectname done" -t 5000
+notify-send "$projectname rendered in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec." -t 5000
 
 # Task is executed inside a terminal
 # This line prevent terminal windows to be closed
