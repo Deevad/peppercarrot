@@ -453,7 +453,7 @@ _update_gfx()
   
   # Project might contain *.gif animation
   cd "$workingpath"
-  getamountofgif=`ls -1 *.gif | wc -l`
+  getamountofgif=`ls -1 *.gif 2>/dev/null | wc -l`
   if [ $getamountofgif != 0 ]; then 
     export -f _update_gfx_gif_work
     ls -1 *.gif | parallel _update_gfx_gif_work "{}"
