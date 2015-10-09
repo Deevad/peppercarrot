@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #: Title       : Pepper&Carrot Renderfarm
-#: Author      : David REVOY < info@davidrevoy.com >
+#: Author      : David REVOY < info@davidrevoy.com >, Mjtalkiewicz (aka Player_2)
 #: License     : GPL
 
-scriptversion="1.0"
+scriptversion="2.0"
 
 # -------------------More informations ---------------
 # a script to export,clean,backup Pepper&Carrot project folder
