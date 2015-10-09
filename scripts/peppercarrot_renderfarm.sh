@@ -192,6 +192,15 @@ _dir_creation()
     mkdir -p "$workingpath"/"$folder_wip"
   fi
   
+  if [ $singlepage_generation = 1 ]; then
+    if [ -d "$workingpath/$folder_lowres/$folder_singlepage" ]; then
+      echo "* $folder_singlepage found" 
+    else
+      echo "${Green}* creating folder: $folder_lowres/$folder_singlepage ${Off}"
+      mkdir -p "$workingpath"/"$folder_lowres"/"$folder_singlepage"
+    fi
+  fi
+  
   echo ""
 }
 
@@ -204,10 +213,7 @@ _update_gfx_gif_work()
   if diff "$workingpath"/"$giffile" "$workingpath"/"$folder_cache"/"$giffile" &>/dev/null ; then
     echo " ==> [gif] $giffile] is up-to-date."
   else
-    echo " ${Blue}==> [gif] $giffile ==> Generating a flat PNG version ${Off}"
-
-    # Update token to regenerate the singlepage
-    gfx_need_regen=1
+    echo " ${Green}==> [gif] $giffile new or modified: rendered. ${Off}"
 
     # Update cache
     cp "$workingpath"/"$giffile" "$workingpath"/"$folder_cache"/"$giffile"
@@ -234,6 +240,9 @@ _update_gfx_gif_work()
       # Copy lowres PNG gfx for lang proxy SVG
       convert $gifframe1 -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lang"/gfx_"$pngfile"
       
+      # Create a dummy file token to indicate what lang where changed
+      touch "$workingpath"/"$folder_cache"/"$langdir"/need_render
+      
     done
   fi
 }
@@ -249,12 +258,9 @@ _update_gfx_kra_work()
 
   # Compare if kra file changed
   if diff "$workingpath"/"$krafile" "$workingpath"/"$folder_cache"/"$krafile" &>/dev/null ; then
-    echo " ==> [kra] $krafile is up-to-date."
+    echo " ==> [kra] $krafile file is up-to-date."
   else
-    echo "${Blue} ==> [kra] $krafile is new or modified: export flat PNG with Krita ${Off}"
-
-    # Update token to regenerate singlepage artworks at the end
-    gfx_need_regen=1
+    echo "${Green} ==> [kra] $krafile is new or modified, rendered. ${Off}"
 
     # Duplicate *.kra to cache
     cp "$workingpath"/"$krafile" "$workingpath"/"$folder_cache"/"$krafile"
@@ -283,11 +289,12 @@ _update_gfx_kra_work()
     convert "$workingpath"/"$folder_cache"/gfx_"$pngfile" -colorspace sRGB -background white -alpha remove -quality 92% "$workingpath"/"$folder_wip"/"$jpgfileversionning"
 
     # Update lang of selected changed file
-    echo "${Blue}     Rendering linked SVG translations to flat PNG with Inskcape ${Off}"
+    echo "${Green}     Rendering now linked translations: ${Off}"
 
     cd "$workingpath"/"$folder_lang"/
 
     for langdir in */; do
+    
       # Clean folder, remove trailing / character
       langdir="${langdir%%?}"
 
@@ -296,9 +303,12 @@ _update_gfx_kra_work()
 
       # Position cursor inside the current cache/lang
       cd "$workingpath"/"$folder_cache"/"$langdir"/
+      
+      # Create a dummy file token to indicate what lang where changed
+      touch "$workingpath"/"$folder_cache"/"$langdir"/need_render
 
       # Verbose
-      echo " ${Yellow}    ==> [$langdir] $svgfile ${Off}"
+      echo " ${Green}    ==> [$langdir] $svgfile rendered ${Off}"
 
       # Do we have a SVG file with same name as our KRA ?
       if [ -d "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" ]; then
@@ -349,17 +359,19 @@ _update_gfx()
   echo "${Yellow} [GFX]${Off}"
   echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
   
+  # Project should contain *.kra artworks anyway
+  cd "$workingpath"
+  export -f _update_gfx_kra_work
+  ls -1 *.kra | parallel _update_gfx_kra_work "{}"
+  
   # Project might contain *.gif animation
-  getamountofgif=`ls -1 *.gif 2&>/dev/null | wc -l`
+  cd "$workingpath"
+  getamountofgif=`ls -1 *.gif | wc -l`
   if [ $getamountofgif != 0 ]; then 
     export -f _update_gfx_gif_work
     ls -1 *.gif | parallel _update_gfx_gif_work "{}"
   fi
 
-  # Project should contain *.kra artworks anyway
-  cd "$workingpath"
-  export -f _update_gfx_kra_work
-  ls -1 *.kra | parallel _update_gfx_kra_work "{}"
 }
 
 _update_lang_work()
@@ -377,16 +389,11 @@ _update_lang_work()
   if diff -r "$workingpath"/"$folder_lang"/"$langdir" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir" &>/dev/null ; then
     echo " ==> [$langdir] folder is up-to-date."
   else
-    echo "${Yellow} ==> [$langdir] new or modified, Regenerating ${Off}"
+    echo "${Green} ==> [$langdir] is new or modified ${Off}"
 
-    # Update token
-    gfx_need_regen=1
-
-    # Update lang on cache, where the png linked is hi-res
+    # Remove existing lang on cache, sanify folder
     if [ -d "$workingpath/$folder_cache/$langdir" ]; then
       rm -R "$workingpath"/"$folder_cache"/"$langdir"
-    else
-      echo "${Blue}==> ${Yellow} creating $langdir: ${Off}"
     fi
 
     cp -R "$workingpath"/"$folder_lang"/"$langdir" "$workingpath"/"$folder_cache"/"$langdir"
@@ -401,21 +408,29 @@ _update_lang_work()
       jpgfile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')".jpg"
       
       # Verbose for Inkscape feedback
-      echo " ${Yellow}==> ${Green}[$langdir] ==> [$svgfile] ==> Inkscape export ${Off}"
+      echo " ${Green}    [$langdir] $svgfile rendered ${Off}"
 
       # Sanify test for SVG coming from Inkscape on Windows, writing problematic path:
       if grep -q 'xlink:href=".*.\\gfx_' "$svgfile"; then
-        echo " ${Blue}=> ${Yellow}[AUTO FIXING] $svgfile${Off}"
+        echo "${Green} ==> Auto-fixing $svgfile${Off}"
         echo "${Red} (-)"
         grep 'xlink:href="' "$svgfile"
         echo "${Off}"
-        sed -i 's/xlink:href=".*.\\gfx/xlink:href="..\/gfx/g' $svgfile
+        
+        # run sed twice in case of two images embed, rare but might happen
+        sed -i 's/xlink:href=".*.\\gfx/xlink:href="..\/gfx/g' "$svgfile"
+        sed -i 's/xlink:href=".*.\\gfx/xlink:href="..\/gfx/g' "$svgfile"
+        
         echo "${Green} (+)"
         grep 'xlink:href="' "$svgfile"
         echo "${Off}"
         
+        # Copying the change everywhere
+        cp "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile"
+        cp "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"/"$svgfile"
+        
         # Update token to trigger a reminder at the end of script; SVG were auto-modified.
-        svg_need_commit=1
+        export svg_need_commit=1
       fi
 
       # Final hi-res PNG print with lang prefix
@@ -427,10 +442,9 @@ _update_lang_work()
       # Crop our hi-res PNG pages for better online web layout
       if [ $cropping_pages = 1 ]; then
         if echo "$pngfile" | grep -q 'P[0-9][0-9]' ; then
-          echo "${Blue} -> ${Yellow} Cropping ${Off}"
           convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -chop 0x70 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
         else
-          echo "${Blue}[info] ${Off} cover artwork, doesn't need cropping."
+          echo "* Cover artwork = not crop."
         fi
       fi
 
@@ -439,6 +453,9 @@ _update_lang_work()
 
       # Save JPG web page on lowres
       cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_lowres"/"$langdir"_"$jpgfile"
+      
+      # Create a dummy file token to indicate what lang where changed
+      touch "$workingpath"/"$folder_cache"/"$langdir"/need_render
 
     done
   fi
@@ -463,49 +480,52 @@ _create_singlepage_work()
 {
   cd "$workingpath"/"$folder_lang"/
   langdir=$1
-  
-  # Clean folder, remove trailing / character
-  langdir="${langdir%%?}"
 
-  # Repositioning the main folder
+  # Repositioning to the main folder
   cd "$workingpath"
-
+    
+  # Create the name, relative to the cover kra name.
   for krafile in *.kra; do
-    # Check if the pattern of vignette is existing for copying the short name.
     if [ "$krafile" = *_E??.kra ]; then
       jpgfile=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')"XXL.jpg"
     fi
   done
-
-  # Repositioning the cache/lang folder
+  
+  # Repositioning to the cache/lang folder
   cd "$workingpath"/"$folder_cache"/"$langdir"/
+  
+  for langdir in */; do
 
-  # Final low-res singlepage with cache for speed:
-  if diff "$workingpath"/"$folder_lowres"/"$folder_singlepage"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" &>/dev/null ; then
-    echo " ==> [$langdir] $langdir_$jpgfile is up-to-date."
-  else
-    echo "${Yellow} ==> [$langdir] ${Off} ${Blue} $langdir_$jpgfile ${Green} Regenerating ${Off}"
-    montage -mode concatenate -tile 1x *P??.png -colorspace sRGB -quality 92% -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
-    cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_lowres"/"$folder_singlepage"/"$langdir"_"$jpgfile"
-  fi
+    # Clean folder, remove trailing / character
+    langdir="${langdir%%?}"
+        
+    # if dummy file token exist in lang folder cached, we need to re-render then clean dummy.
+    if [ -f "$workingpath"/"$folder_cache"/"$langdir"/need_render ]; then
+      echo "${Green} ==> [$langdir] $langdir_$jpgfile rendered${Off}"
+      
+      # create the montage with imagemagick from all PNG found with a page pattern in cache folder.
+      montage -mode concatenate -tile 1x *P??.png -colorspace sRGB -quality 92% -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
+      
+      # copy the rendering in the final folder
+      cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_lowres"/"$folder_singlepage"/"$langdir"_"$jpgfile"
+      
+      # remove dummy file when job is done
+      rm "$workingpath"/"$folder_cache"/"$langdir"/need_render
+      
+    else
+      echo " ==> [$langdir] $langdir_$jpgfile is up-to-date."
+    fi
+    
+  done
 }
 _create_singlepage()
 {
   # Method to create a long strip
-  # (a vertical montage of all pages)
+  # A vertical montage of all pages
     
   echo ""
   echo "${Yellow} [SINGLEPAGE]${Off}"
   echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
-  
-  # Generating a folder to store singlepage artworks
-  cd "$workingpath"
-  if [ -d "$workingpath/$folder_lowres/$folder_singlepage" ]; then
-    true
-  else
-    mkdir -p "$workingpath"/"$folder_lowres"/"$folder_singlepage"
-    echo "${Green}* creating folder: $folder_lowres/$folder_singlepage ${Off}"
-  fi
   
   export -f _create_singlepage_work
   cd "$workingpath"/"$folder_lang"/ && ls -1d */ | parallel _create_singlepage_work "{}"
