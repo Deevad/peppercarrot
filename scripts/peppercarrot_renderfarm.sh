@@ -477,6 +477,9 @@ _update_lang_work()
 
         # Final hi-res PNG print with lang prefix
         inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+        
+        # Optimize PNG test : Note , -define png:compression-strategy=zs , -define png:compression-level=zl, -define png:compression-filter=fm
+        convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -define png:compression-strategy=3  -define png:compression-level=9 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
 
         # Save PNG full page on hires
         cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" "$workingpath"/"$folder_hires"/"$langdir"_"$pngfile"
