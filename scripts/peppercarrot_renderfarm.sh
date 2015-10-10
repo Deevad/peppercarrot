@@ -688,6 +688,25 @@ _create_zip_collection()
   fi
 }
 
+_clean_cache()
+{
+  cd "$workingpath"/"$folder_cache"/
+
+  for langdir in */; do
+
+    # Clean folder, remove trailing / character
+    langdir="${langdir%%?}"
+    
+    # Repositioning to the cache/lang folder
+    cd "$workingpath"/"$folder_cache"/"$langdir"/
+      
+    # clean up
+    rm -f "$workingpath"/"$folder_cache"/"$langdir"/*.png
+    rm -f "$workingpath"/"$folder_cache"/"$langdir"/*.jpg
+    
+  done
+}
+
 # Runtime counter: start
 renderfarm_runtime_start=$(date +"%s")
 
@@ -707,6 +726,8 @@ fi
 if [ $zip_generation = 1 ]; then
   _create_zip_collection
 fi
+
+_clean_cache
 
 # Runtime counter: end and math
 renderfarm_runtime_end=$(date +"%s")
