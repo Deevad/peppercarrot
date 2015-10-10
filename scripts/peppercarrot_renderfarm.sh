@@ -317,6 +317,10 @@ _update_gfx_kra_work()
     
     # Generate PNG hi-res in cache
     krita --export "$workingpath"/"$krafile" --export-filename "$workingpath"/"$folder_cache"/gfx_"$pngfile"
+    
+    # test
+    # unzip -j "$workingpath"/"$krafile" "mergedimage.png" -d "$workingpath"/"$folder_cache"
+    # mv "$workingpath"/"$folder_cache"/"mergedimage.png" "$workingpath"/"$folder_cache"/gfx_"$pngfile"
 
     # Check if we are not processing the cover/thumbnail, comparing with a mask pattern.
     if [ "$krafile" = *_E??.kra ]; then
@@ -455,10 +459,17 @@ _update_lang_work()
       rendermefile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')"-renderme.txt"
       
       # Compare if langage folder changed compare to the version we cached in cache/lang/lang
-      # Or, try to guess if the file needs a rendering thanks to the presence of a token file renderme
-      if [ diff "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"/"$svgfile" &>/dev/null ] || [ ! -f "$workingpath"/"$folder_cache"/"$langdir"/"$rendermefile" ]; then
+      if diff "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"/"$svgfile" &>/dev/null ; then
+       true
+      else
+        touch "$workingpath"/"$folder_cache"/"$langdir"/"$rendermefile"
+      fi
+      
+      # Check if there is not a ready made renderme token ready
+      if [ ! -f "$workingpath"/"$folder_cache"/"$langdir"/"$rendermefile" ]; then
         true
       else
+
         echo "${Green} ==> [$langdir] $svgfile is new or modified ${Off}"
 
         # Final hi-res PNG print with lang prefix
@@ -570,8 +581,8 @@ _create_singlepage_work()
     if [ -f "$workingpath"/"$folder_cache"/"$langdir"/need_render.txt ]; then
       echo "${Green} ==> [$langdir] $langdir_$jpgfile rendered${Off}"
       
-      # create the montage with imagemagick from all PNG found with a page pattern in cache folder.
-      montage -mode concatenate -tile 1x *P??.jpg -colorspace sRGB -quality 92% -resize "$resizejpg" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
+      # create the montage with imagemagick from all PNG found with a page pattern in cache folder. 0.48x0.48+0.50+0.012
+      montage -mode concatenate -tile 1x *P??.jpg -colorspace sRGB -quality 92% -resize "$resizejpg" -unsharp 0.60x0.60+1.2+0.012 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
       
       # copy the rendering in the final folder
       cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_lowres"/"$folder_singlepage"/"$langdir"_"$jpgfile"
