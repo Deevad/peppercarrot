@@ -492,50 +492,77 @@ _update_lang_work()
   else
     echo "${Green} ==> [$langdir] is new or modified ${Off}"
 
-    # Remove existing lang on cache, sanify folder
+    # Check if the target folder exist in case of a new lang
     if [ -d "$workingpath/$folder_cache/$langdir" ]; then
-      rm -R "$workingpath"/"$folder_cache"/"$langdir"
+      true
+    else
+      mkdir -p "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"
     fi
-
-    cp -R "$workingpath"/"$folder_lang"/"$langdir" "$workingpath"/"$folder_cache"/"$langdir"
-    cp -R "$workingpath"/"$folder_lang"/"$langdir" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"
-
+    
     # Position cursor inside the current cache/lang
-    cd "$workingpath"/"$folder_cache"/"$langdir"/
+    cd "$workingpath"/"$folder_lang"/"$langdir"/
 
     # New loop : we process the SVG of the current lang dir
     for svgfile in *.svg; do
       pngfile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')".png"
       jpgfile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')".jpg"
       
-      # Verbose for Inkscape feedback
-      echo " ${Green}    [$langdir] $svgfile rendered ${Off}"
+      # Compare if langage folder changed compare to the version we cached in cache/lang/lang
+      if diff "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"/"$svgfile" &>/dev/null ; then
+        true
+      else
+        echo "${Green}     * $svgfile rendering ${Off}"
 
-      # Final hi-res PNG print with lang prefix
-      inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+        # Final hi-res PNG print with lang prefix
+        inkscape -z "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
 
-      # Save PNG full page on hires
-      cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" "$workingpath"/"$folder_hires"/"$langdir"_"$pngfile"
+        # Save PNG full page on hires
+        cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" "$workingpath"/"$folder_hires"/"$langdir"_"$pngfile"
 
-      # Crop our hi-res PNG pages for better online web layout
-      if [ $cropping_pages = 1 ]; then
-        if echo "$pngfile" | grep -q 'P[0-9][0-9]' ; then
-          convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -chop 0x70 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
-        else
-          echo "* Cover artwork = not crop."
+        # Crop our hi-res PNG pages for better online web layout
+        if [ $cropping_pages = 1 ]; then
+          if echo "$pngfile" | grep -q 'P[0-9][0-9]' ; then
+            convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -chop 0x70 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+          else
+            echo "* Cover artwork = not crop."
+          fi
         fi
+
+        # Final low-res JPG with lang prefix
+        convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -background white -alpha remove -quality 92% "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
+
+        # Save JPG web page on lowres
+        cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_lowres"/"$langdir"_"$jpgfile"
+        
+        # Create a dummy file token to indicate what lang where changed
+        touch "$workingpath"/"$folder_cache"/"$langdir"/need_render
+        
+        # Check if the target folder exist in case of a new lang
+        if [ -d "$workingpath/$folder_cache/$langdir/$langdir" ]; then
+          true
+        else
+          mkdir -p "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"
+        fi
+        
+        # Update cache to get the new version
+        cp -R "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile"
+        cp -R "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"/"$svgfile"
+        
       fi
-
-      # Final low-res JPG with lang prefix
-      convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -background white -alpha remove -quality 92% "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
-
-      # Save JPG web page on lowres
-      cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_lowres"/"$langdir"_"$jpgfile"
-      
-      # Create a dummy file token to indicate what lang where changed
-      touch "$workingpath"/"$folder_cache"/"$langdir"/need_render
-
     done
+    
+    # If project contain *.gif , copy them to low-res
+    cd "$workingpath"
+    getamountofgif=`ls -1 *.gif 2>/dev/null | wc -l`
+    if [ $getamountofgif != 0 ]; then 
+      for giffile in *.gif; do
+      cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_lowres"/"$langdir"_"$giffile"
+      cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_lowres"/"$folder_gfxonly"/gfx_"$giffile"
+      cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_hires"/"$langdir"_"$giffile"
+      cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_hires"/"$folder_gfxonly"/gfx_"$giffile"
+      done
+    fi
+    
   fi
 }
 
