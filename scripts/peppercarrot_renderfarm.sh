@@ -4,7 +4,7 @@
 #: Author      : David REVOY < info@davidrevoy.com >, Mjtalkiewicz (aka Player_2)
 #: License     : GPL
 
-scriptversion="3.0"
+scriptversion="4.0"
 
 # -------------------More informations ---------------
 # a script to export,clean,backup Pepper&Carrot project folder
@@ -50,11 +50,6 @@ scriptversion="3.0"
 # SPEC :
 # lang project use iso-code two characters.
 # Svg files have relative link to generated ../gfx_projectname_E01P01.png
-
-# TODO :
-# * [peppecarrot_manager.sh] 'cache' folder is too heavy a copy
-#     Idea : maybe store file spec in a txt, then compare txt, eg :
-#     ls -l Pepper-and-Carrot_by-David-Revoy_E06.kra > testtxt.txt
 
 # Have fun!
 # -----------------------------------------------------
