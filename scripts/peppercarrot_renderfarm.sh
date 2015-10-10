@@ -149,35 +149,35 @@ _dir_creation()
   if [ -d "$workingpath/$folder_cache" ]; then
     echo " * $folder_cache found" 
   else
-    echo "${Green}* creating folder: $folder_cache ${Off}"
+    echo "${Green} * creating folder: $folder_cache ${Off}"
     mkdir -p "$workingpath"/"$folder_cache"
   fi
 
   if [ -d "$workingpath/$folder_lowres" ]; then
     echo " * $folder_lowres found" 
   else
-    echo "${Green}* creating folder: $folder_lowres/$folder_gfxonly ${Off}"
+    echo "${Green} * creating folder: $folder_lowres/$folder_gfxonly ${Off}"
     mkdir -p "$workingpath"/"$folder_lowres"/"$folder_gfxonly"
   fi
 
   if [ -d "$workingpath/$folder_hires" ]; then
     echo " * $folder_hires found" 
   else
-    echo "${Green}* creating folder: $folder_hires/$folder_gfxonly ${Off}"
+    echo "${Green} * creating folder: $folder_hires/$folder_gfxonly ${Off}"
     mkdir -p "$workingpath"/"$folder_hires"/"$folder_gfxonly"
   fi
 
   if [ -d "$workingpath/$folder_backup" ]; then
     echo " * $folder_backup found" 
   else
-    echo "${Green}* creating folder: $folder_backup ${Off}"
+    echo "${Green} * creating folder: $folder_backup ${Off}"
     mkdir -p "$workingpath"/"$folder_backup"
   fi
   
   if [ -d "$workingpath/$folder_wip" ]; then
     echo " * $folder_wip found" 
   else
-    echo "${Green}* creating folder: $folder_wip ${Off}"
+    echo "${Green} * creating folder: $folder_wip ${Off}"
     mkdir -p "$workingpath"/"$folder_wip"
   fi
   
@@ -185,7 +185,7 @@ _dir_creation()
     if [ -d "$workingpath/$folder_lowres/$folder_singlepage" ]; then
       echo " * $folder_singlepage found" 
     else
-      echo "${Green}* creating folder: $folder_lowres/$folder_singlepage ${Off}"
+      echo "${Green} * creating folder: $folder_lowres/$folder_singlepage ${Off}"
       mkdir -p "$workingpath"/"$folder_lowres"/"$folder_singlepage"
     fi
   fi
@@ -193,7 +193,7 @@ _dir_creation()
   if [ -d "$workingpath/$folder_lang" ]; then
     echo " * $folder_lang found" 
   else
-    echo "${Green}* creating folder: $folder_lang ${Off}"
+    echo "${Green} * creating folder: $folder_lang ${Off}"
     mkdir -p "$workingpath"/"$folder_lang"
   fi
 
@@ -459,7 +459,7 @@ _update_lang_work()
       rendermefile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')"-renderme.txt"
       
       # Compare if langage folder changed compare to the version we cached in cache/lang/lang
-      if diff "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"/"$svgfile" &>/dev/null ; then
+      if diff "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" &>/dev/null ; then
        true
       else
         touch "$workingpath"/"$folder_cache"/"$langdir"/"$rendermefile"
@@ -471,9 +471,12 @@ _update_lang_work()
       else
 
         echo "${Green} ==> [$langdir] $svgfile is new or modified ${Off}"
+        
+        # Copy the fresh SVG in the cache, along the Hi-Res PNG gfx, for a hi-res rendering
+        cp "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile"
 
         # Final hi-res PNG print with lang prefix
-        inkscape -z "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+        inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
 
         # Save PNG full page on hires
         cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" "$workingpath"/"$folder_hires"/"$langdir"_"$pngfile"
@@ -497,15 +500,11 @@ _update_lang_work()
         touch "$workingpath"/"$folder_cache"/"$langdir"/need_render.txt
         
         # Check if the target folder exist in case of a new lang
-        if [ -d "$workingpath/$folder_cache/$langdir/$langdir" ]; then
+        if [ -d "$workingpath/$folder_cache/$langdir" ]; then
           true
         else
-          mkdir -p "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"
+          mkdir -p "$workingpath"/"$folder_cache"/"$langdir"
         fi
-        
-        # Update cache to get the new version
-        cp -R "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile"
-        cp -R "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"/"$svgfile"
         
       fi
     done
@@ -542,6 +541,9 @@ _create_singlepage_work()
 {
   cd "$workingpath"/"$folder_lang"/
   langdir=$1
+  
+  # Clean folder, remove trailing / character
+  langdir="${langdir%%?}"
 
   # Repositioning to the main folder
   cd "$workingpath"
@@ -553,48 +555,48 @@ _create_singlepage_work()
     fi
   done
   
+  # Repositioning to the cache folder
+  cd "$workingpath"/"$folder_cache"/
+  
+  # If project contain *.gif , include them in the loop for single page, but as static PNG
+  cd "$workingpath"
+  getamountofgif=`ls -1 *.gif 2>/dev/null | wc -l`
+  
+  if [ $getamountofgif != 0 ]; then 
+    for giffile in *.gif; do
+    pngfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".png"
+    jpgfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".jpg"
+    gifframe1="$workingpath"/"$folder_cache"/"$giffile"[0]
+    convert "$gifframe1" -bordercolor white -border 0x20 -colorspace sRGB "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+    convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -quality 92% -resize "$resizejpg" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
+    done
+  fi
+  
   # Repositioning to the cache/lang folder
   cd "$workingpath"/"$folder_cache"/"$langdir"/
-  
-  for langdir in */; do
-
-    # Clean folder, remove trailing / character
-    langdir="${langdir%%?}"
+      
+  # if dummy file token exist in lang folder cached, we need to re-render then clean dummy.
+  if [ -f "$workingpath"/"$folder_cache"/"$langdir"/need_render.txt ]; then
+    echo "${Green} ==> [$langdir] $langdir_$jpgfile rendered${Off}"
     
-    # If project contain *.gif , include them in the loop for single page, but as static PNG
-    cd "$workingpath"
-    getamountofgif=`ls -1 *.gif 2>/dev/null | wc -l`
-    if [ $getamountofgif != 0 ]; then 
-      for giffile in *.gif; do
-      pngfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".png"
-      jpgfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".jpg"
-      gifframe1="$workingpath"/"$folder_cache"/"$giffile"[0]
-      convert "$gifframe1" -bordercolor white -border 0x20 -colorspace sRGB "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
-      convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -quality 92% -resize "$resizejpg" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
-      done
-    fi
+    # Repositioning in the hi-res folder
+    cd "$workingpath"/"$folder_hires"/
+    
+    # Get temporary all the PNG hi-res in cache for fusion
+    cp "$langdir"*.png "$workingpath"/"$folder_cache"/"$langdir"/
     
     # Repositioning to the cache/lang folder
     cd "$workingpath"/"$folder_cache"/"$langdir"/
-        
-    # if dummy file token exist in lang folder cached, we need to re-render then clean dummy.
-    if [ -f "$workingpath"/"$folder_cache"/"$langdir"/need_render.txt ]; then
-      echo "${Green} ==> [$langdir] $langdir_$jpgfile rendered${Off}"
       
-      # create the montage with imagemagick from all PNG found with a page pattern in cache folder. 0.48x0.48+0.50+0.012
-      montage -mode concatenate -tile 1x *P??.jpg -colorspace sRGB -quality 92% -resize "$resizejpg" -unsharp 0.60x0.60+1.2+0.012 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
-      
-      # copy the rendering in the final folder
-      cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_lowres"/"$folder_singlepage"/"$langdir"_"$jpgfile"
-      
-      # remove dummy file when job is done
-      rm "$workingpath"/"$folder_cache"/"$langdir"/need_render.txt
-      
-    else
-      echo " ==> [$langdir] $langdir_$jpgfile is up-to-date."
-    fi
+    # create the montage with imagemagick from all PNG found with a page pattern in cache folder.
+    montage -mode concatenate -tile 1x *P??.png -colorspace sRGB -quality 92% -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
     
-  done
+    # copy the rendering in the final folder
+    cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_lowres"/"$folder_singlepage"/"$langdir"_"$jpgfile"
+    
+  else
+    echo " ==> [$langdir] $langdir_$jpgfile is up-to-date."
+  fi
 }
 _create_singlepage()
 {
@@ -661,6 +663,7 @@ _clean_cache()
       
     # clean up
     rm -f "$workingpath"/"$folder_cache"/"$langdir"/*.png
+    rm -f "$workingpath"/"$folder_cache"/"$langdir"/*.jpg
     rm -f "$workingpath"/"$folder_cache"/"$langdir"/*.txt
     
   done
