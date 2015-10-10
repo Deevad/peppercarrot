@@ -201,7 +201,6 @@ _dir_creation()
 
 _check_svg()
 {
-  
   # Check if Git is installed on the machine
   isgitinstalled=`type -t git | wc -l`
   
@@ -286,48 +285,6 @@ _check_svg()
   echo ""
 }
 
-_update_gfx_gif_work()
-{
-  giffile=$1
-  pngfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".png"
-
-  # Compare if gif file changed
-  if diff "$workingpath"/"$giffile" "$workingpath"/"$folder_cache"/"$giffile" &>/dev/null ; then
-    echo " ==> [gif] $giffile] is up-to-date."
-  else
-    echo " ${Green}==> [gif] $giffile new or modified: rendered. ${Off}"
-
-    # Update cache
-    cp "$workingpath"/"$giffile" "$workingpath"/"$folder_cache"/"$giffile"
-    
-    # Ensure to reset on folder_lang on the start of the loop
-    cd "$workingpath"/"$folder_lang"/
-
-    for langdir in */;
-    do
-      # Clean folder, remove trailing / character
-      langdir="${langdir%%?}"
-      
-      # Prevent missing lang folder at a first run
-      mkdir -p "$workingpath"/"$folder_cache"/"$langdir"
-
-      # Spread the Gif as it is in all the pages (gifs have no translations)
-      cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_lowres"/"$langdir"_"$giffile"
-      cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_lowres"/"$folder_gfxonly"/gfx_"$giffile"
-      cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_hires"/"$langdir"_"$giffile"
-      cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_hires"/"$folder_gfxonly"/gfx_"$giffile"
-
-      # Copy lowres PNG gfx for lang proxy SVG
-      gifframe1="$workingpath"/"$folder_cache"/"$giffile"[0]
-      convert "$gifframe1" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lang"/gfx_"$pngfile"
-      
-      # Create a dummy file token to indicate what lang where changed
-      touch "$workingpath"/"$folder_cache"/"$langdir"/need_render
-      
-    done
-  fi
-}
-
 _update_gfx_kra_work()
 {
   krafile=$1
@@ -337,6 +294,7 @@ _update_gfx_kra_work()
   jpgfile=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')".jpg"
   svgfile=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')".svg"
   jpgfileversionning=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')_$version".jpg"
+  rendermefile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')"-renderme.txt"
 
   # Read the checksum of *.kra file
   md5read="`md5sum $krafile`"
@@ -387,61 +345,60 @@ _update_gfx_kra_work()
       # Clean folder, remove trailing / character
       langdir="${langdir%%?}"
       
-      # Only work if the lang directory already exist on cache, to fix a bug at first launch
-      if [ -d "$workingpath"/"$folder_cache"/"$langdir" ]; then 
-      
-        # Update lang of selected changed file
-        echo "${Green}     Rendering now linked translations: ${Off}"
-      
-        # Ensure to reset on folder_lang on the start of the loop
-        cd "$workingpath"/"$folder_lang"/
-
-        # Position cursor inside the current cache/lang
+        # Create folder
+        mkdir -p "$workingpath"/"$folder_cache"/"$langdir"
+        
+        # Position cursor inside the current folder
         cd "$workingpath"/"$folder_cache"/"$langdir"/
         
-        # Create a dummy file token to indicate what lang where changed
-        touch "$workingpath"/"$folder_cache"/"$langdir"/need_render
-
-        # Verbose
-        echo " ${Green}    ==> [$langdir] $svgfile rendered ${Off}"
-
-        # Do we have a SVG file with same name as our KRA ?
-        if [ -d "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" ]; then
-          # Yes. Final hi-res PNG print with lang prefix
-          inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
-        else
-          # No. Transmit the gfx-only version high res. Muted page exist.
-          cp "$workingpath"/"$folder_cache"/gfx_"$pngfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"          
-        fi
-
-        # Final hi-res PNG print with lang prefix
-        inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
-
-        # Copy PNG full-res to proper hires folder
-        cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" "$workingpath"/"$folder_hires"/"$langdir"_"$pngfile"
-
-        # Generate WIP (Work-in-Progress) jpg : full res, JPG, 92%, no lang. For keeping track later of modification in WIP folder.
-        convert "$workingpath"/"$folder_cache"/gfx_"$pngfile" -colorspace sRGB -background white -alpha remove -quality 92% "$workingpath"/"$folder_wip"/"$jpgfileversionning"
-
-        # Crop our hi-res PNG pages for better online web layout
-        if [ $cropping_pages = 1 ]; then
+        # Create a dummy file token to indicate singlepage to render
+        touch "$workingpath"/"$folder_cache"/"$langdir"/need_render.txt
         
-          # Rule to exclude cover from being cropped :
-          if echo "$pngfile" | grep -q 'P[0-9][0-9]' ; then
-            convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -chop 0x70 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
-          else
-            echo "* Cover artwork = not crop."
-          fi
-          
-        fi
-
-        # Final low-res JPG for online with lang prefix, unsharp and correct quality, generated on cache
-        convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -background white -alpha remove -quality 92% "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
-
-        # Copy the final JPG to proper lowres folder
-        cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_lowres"/"$langdir"_"$jpgfile"
+        # Send a renderme token to let know update_lang_work he has rendering work to do
+        touch "$workingpath"/"$folder_cache"/"$langdir"/"$rendermefile"
         
-      fi
+    done
+  fi
+}
+
+_update_gfx_gif_work()
+{
+  giffile=$1
+  pngfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".png"
+
+  # Compare if gif file changed
+  if diff "$workingpath"/"$giffile" "$workingpath"/"$folder_cache"/"$giffile" &>/dev/null ; then
+    echo " ==> [gif] $giffile is up-to-date."
+  else
+    echo " ${Green}==> [gif] $giffile new or modified: rendered. ${Off}"
+
+    # Update cache
+    cp "$workingpath"/"$giffile" "$workingpath"/"$folder_cache"/"$giffile"
+    
+    # Ensure to reset on folder_lang on the start of the loop
+    cd "$workingpath"/"$folder_lang"/
+
+    for langdir in */;
+    do
+      # Clean folder, remove trailing / character
+      langdir="${langdir%%?}"
+      
+      # Prevent missing lang folder at a first run
+      mkdir -p "$workingpath"/"$folder_cache"/"$langdir"
+
+      # Spread the Gif as it is in all the pages (gifs have no translations)
+      cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_lowres"/"$langdir"_"$giffile"
+      cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_lowres"/"$folder_gfxonly"/gfx_"$giffile"
+      cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_hires"/"$langdir"_"$giffile"
+      cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_hires"/"$folder_gfxonly"/gfx_"$giffile"
+
+      # Copy lowres PNG gfx for lang proxy SVG
+      gifframe1="$workingpath"/"$folder_cache"/"$giffile"[0]
+      convert "$gifframe1" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lang"/gfx_"$pngfile"
+      
+      # Create a dummy file token to indicate what lang where changed
+      touch "$workingpath"/"$folder_cache"/"$langdir"/need_render.txt
+      
     done
   fi
 }
@@ -481,12 +438,6 @@ _update_lang_work()
   # Ensure to reset on folder_lang on the start of the loop
   cd "$workingpath"/"$folder_lang"/
 
-  # Compare if langage folder changed compare to the version we cached in cache/lang/lang
-  if diff -r "$workingpath"/"$folder_lang"/"$langdir" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir" &>/dev/null ; then
-    echo " ==> [$langdir] folder is up-to-date."
-  else
-    echo "${Green} ==> [$langdir] is new or modified ${Off}"
-
     # Check if the target folder exist in case of a new lang
     if [ -d "$workingpath/$folder_cache/$langdir" ]; then
       true
@@ -501,12 +452,14 @@ _update_lang_work()
     for svgfile in *.svg; do
       pngfile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')".png"
       jpgfile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')".jpg"
+      rendermefile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')"-renderme.txt"
       
       # Compare if langage folder changed compare to the version we cached in cache/lang/lang
-      if diff "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"/"$svgfile" &>/dev/null ; then
+      # Or, try to guess if the file needs a rendering thanks to the presence of a token file renderme
+      if [ diff "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"/"$svgfile" &>/dev/null ] || [ ! -f "$workingpath"/"$folder_cache"/"$langdir"/"$rendermefile" ]; then
         true
       else
-        echo "${Green}     * $svgfile rendering ${Off}"
+        echo "${Green} ==> [$langdir] $svgfile is new or modified ${Off}"
 
         # Final hi-res PNG print with lang prefix
         inkscape -z "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
@@ -530,7 +483,7 @@ _update_lang_work()
         cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_lowres"/"$langdir"_"$jpgfile"
         
         # Create a dummy file token to indicate what lang where changed
-        touch "$workingpath"/"$folder_cache"/"$langdir"/need_render
+        touch "$workingpath"/"$folder_cache"/"$langdir"/need_render.txt
         
         # Check if the target folder exist in case of a new lang
         if [ -d "$workingpath/$folder_cache/$langdir/$langdir" ]; then
@@ -557,8 +510,6 @@ _update_lang_work()
       cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_hires"/"$folder_gfxonly"/gfx_"$giffile"
       done
     fi
-    
-  fi
 }
 
 
@@ -605,8 +556,10 @@ _create_singlepage_work()
     if [ $getamountofgif != 0 ]; then 
       for giffile in *.gif; do
       pngfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".png"
+      jpgfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".jpg"
       gifframe1="$workingpath"/"$folder_cache"/"$giffile"[0]
       convert "$gifframe1" -bordercolor white -border 0x20 -colorspace sRGB "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+      convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -quality 92% -resize "$resizejpg" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
       done
     fi
     
@@ -614,17 +567,17 @@ _create_singlepage_work()
     cd "$workingpath"/"$folder_cache"/"$langdir"/
         
     # if dummy file token exist in lang folder cached, we need to re-render then clean dummy.
-    if [ -f "$workingpath"/"$folder_cache"/"$langdir"/need_render ]; then
+    if [ -f "$workingpath"/"$folder_cache"/"$langdir"/need_render.txt ]; then
       echo "${Green} ==> [$langdir] $langdir_$jpgfile rendered${Off}"
       
       # create the montage with imagemagick from all PNG found with a page pattern in cache folder.
-      montage -mode concatenate -tile 1x *P??.png -colorspace sRGB -quality 92% -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
+      montage -mode concatenate -tile 1x *P??.jpg -colorspace sRGB -quality 92% -resize "$resizejpg" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
       
       # copy the rendering in the final folder
       cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_lowres"/"$folder_singlepage"/"$langdir"_"$jpgfile"
       
       # remove dummy file when job is done
-      rm "$workingpath"/"$folder_cache"/"$langdir"/need_render
+      rm "$workingpath"/"$folder_cache"/"$langdir"/need_render.txt
       
     else
       echo " ==> [$langdir] $langdir_$jpgfile is up-to-date."
@@ -697,7 +650,7 @@ _clean_cache()
       
     # clean up
     rm -f "$workingpath"/"$folder_cache"/"$langdir"/*.png
-    rm -f "$workingpath"/"$folder_cache"/"$langdir"/*.jpg
+    rm -f "$workingpath"/"$folder_cache"/"$langdir"/*.txt
     
   done
 }
