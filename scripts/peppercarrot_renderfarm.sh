@@ -4,7 +4,7 @@
 #: Author      : David REVOY < info@davidrevoy.com >, Mjtalkiewicz (aka Player_2)
 #: License     : GPL
 
-scriptversion="4.0"
+scriptversion="5.0"
 
 # -------------------More informations ---------------
 # a script to export,clean,backup Pepper&Carrot project folder
