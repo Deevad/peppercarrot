@@ -92,6 +92,9 @@ export RedBG=$'\e[1;41m'
 export PurpleBG=$'\e[1;45m'
 export Black=$'\e[1;30m'
 
+# Windows title
+printf "\033]0;%s\007\n" "Render: $projectname"
+
 # Memory token
 export gfx_need_regen=0
 export svg_need_commit=0
@@ -708,6 +711,9 @@ echo ""
 
 # Notification for system when out-of-focus
 notify-send "Pepper&Carrot Renderfarm" "$projectname rendered in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec."
+
+# Windows title
+printf "\033]0;%s\007\n" "Done: $projectname"
 
 # Task is executed inside a terminal
 # This line prevent terminal windows to be closed
