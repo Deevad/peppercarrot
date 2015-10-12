@@ -447,6 +447,19 @@ _update_lang_work()
       true
     else
       mkdir -p "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"
+      
+      # If a new lang folder exist, we need to also copy it's *.gif to low-res
+      cd "$workingpath"
+      getamountofgif=`ls -1 *.gif 2>/dev/null | wc -l`
+      if [ $getamountofgif != 0 ]; then 
+        for giffile in *.gif; do
+          cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_lowres"/"$langdir"_"$giffile"
+          cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_lowres"/"$folder_gfxonly"/gfx_"$giffile"
+          cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_hires"/"$langdir"_"$giffile"
+          cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_hires"/"$folder_gfxonly"/gfx_"$giffile"
+        done
+      fi
+
     fi
     
     # Position cursor inside the current cache/lang
@@ -511,18 +524,6 @@ _update_lang_work()
         
       fi
     done
-    
-    # If project contain *.gif , copy them to low-res
-    cd "$workingpath"
-    getamountofgif=`ls -1 *.gif 2>/dev/null | wc -l`
-    if [ $getamountofgif != 0 ]; then 
-      for giffile in *.gif; do
-      cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_lowres"/"$langdir"_"$giffile"
-      cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_lowres"/"$folder_gfxonly"/gfx_"$giffile"
-      cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_hires"/"$langdir"_"$giffile"
-      cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_hires"/"$folder_gfxonly"/gfx_"$giffile"
-      done
-    fi
 }
 
 
@@ -558,29 +559,25 @@ _create_singlepage_work()
     fi
   done
   
-  # Repositioning to the cache folder
-  cd "$workingpath"/"$folder_cache"/
-  
-  # If project contain *.gif , include them in the loop for single page, but as static PNG
-  cd "$workingpath"
-  getamountofgif=`ls -1 *.gif 2>/dev/null | wc -l`
-  
-  if [ $getamountofgif != 0 ]; then 
-    for giffile in *.gif; do
-    pngfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".png"
-    jpgfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".jpg"
-    gifframe1="$workingpath"/"$folder_cache"/"$giffile"[0]
-    convert "$gifframe1" -bordercolor white -border 0x20 -colorspace sRGB "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
-    convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -quality 92% -resize "$resizejpg" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
-    done
-  fi
-  
   # Repositioning to the cache/lang folder
   cd "$workingpath"/"$folder_cache"/"$langdir"/
       
   # if dummy file token exist in lang folder cached, we need to re-render then clean dummy.
   if [ -f "$workingpath"/"$folder_cache"/"$langdir"/need_render.txt ]; then
     echo "${Green} ==> [$langdir] $langdir_$jpgfile rendered${Off}"
+    
+    # If project get updated *.gif , copy before generating the single page, but as static PNG to be catched by the montage wild mask *.png loop
+    cd "$workingpath"
+    getamountofgif=`ls -1 *.gif 2>/dev/null | wc -l`
+    if [ $getamountofgif != 0 ]; then 
+      for giffile in *.gif; do
+      pngfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".png"
+      jpgfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".jpg"
+      gifframe1="$workingpath"/"$folder_cache"/"$giffile"[0]
+      convert "$gifframe1" -bordercolor white -border 0x20 -colorspace sRGB "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+      convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -quality 92% -resize "$resizejpg" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
+      done
+    fi
     
     # Repositioning in the hi-res folder
     cd "$workingpath"/"$folder_hires"/
