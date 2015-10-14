@@ -120,12 +120,12 @@ _setup()
   
   # Setup : load special rules depending on folder name
   
-  if echo "$projectname" | grep -q '_ep01'; then
+  if echo "$projectname" | grep -q 'ep01'; then
     echo "${Yellow} [SETUP]${Green} Episode 1 mode${Off}"
     singlepage_generation=0
     cropping_pages=0
   
-  elif echo "$projectname" | grep -q '_ep02'; then
+  elif echo "$projectname" | grep -q 'ep02'; then
     echo "${Yellow} [SETUP]${Green} Episode 2 mode${Off}"
     singlepage_generation=0
     cropping_pages=0
