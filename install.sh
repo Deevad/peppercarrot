@@ -151,7 +151,7 @@ echo ""
 echo " * Pepper&Carrot installed in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec."
 
 # Notification for system when out-of-focus
-notify-send "LFTP (low)" "$projectname uploaded in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec."
+notify-send "Installer" "all task done in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec."
 
 echo -n " Press [Enter] to exit"
 read end
