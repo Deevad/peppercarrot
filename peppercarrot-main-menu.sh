@@ -83,6 +83,7 @@ _main_menu()
   items+=( "Edit All README.md" )
   items+=( "Upload FTP (low)" )
   items+=( "Upload FTP (hi)" )
+  items+=( "Update .episodes-list.md" )
   items+=( "Render all episodes" )
 
   menuchoice=$(zenity --list --title='Pepper&Carrot Main Menu' \
@@ -164,16 +165,6 @@ _sub_menu()
   done
 }
 
-
-# TO-DO : loop on episode and output a sort of listing of episode names.
-#for directories in $(find $folder_webcomics -maxdepth 1 -type d -printf '%f\n' | sort ); do
-  #episodefolder=$directories
-  #if [[ $episodefolder == *"ep"* ]]; then
-    #cd "$folder_webcomics"
-    #echo "http://www.peppercarrot.com/0_sources/$episodefolder/" >> "$folder_webcomics"/list.txt
-  #fi
-#done
-
 # Execute
 _main_menu
 
@@ -212,6 +203,19 @@ elif [ "$menuchoicecleaned" = "Render all episodes" ]; then
     fi
   done
     
+elif [ "$menuchoicecleaned" = "Update .episodes-list.md" ]; then
+  # Clean old version
+  rm "$folder_webcomics"/.episodes-list.md
+  
+  # Loop on episodes and output a sort of listing of episode names.
+  for directories in $(find $folder_webcomics -maxdepth 1 -type d -printf '%f\n' | sort ); do
+    episodefolder=$directories
+    if [[ $episodefolder == *"ep"* ]]; then
+      cd "$folder_webcomics"
+      echo "$episodefolder" >> "$folder_webcomics"/.episodes-list.md
+    fi
+  done
+  
 elif [ "$menuchoicecleaned" = "Upload FTP (low)" ]; then
   cd $folder_webcomics
   gnome-terminal --command="$folder_scripts"/lowres_uploader.sh
