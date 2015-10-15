@@ -100,6 +100,7 @@ readarray input < .episodes-list.md
 echo '[Desktop Entry]' > $HOME/.local/share/applications/peppercarrot-menu.desktop
 echo 'Comment=All services, uploading, rendering and more for managing Pepper&Carrot project' >> $HOME/.local/share/applications/peppercarrot-menu.desktop
 echo 'Terminal=false' >> $HOME/.local/share/applications/peppercarrot-menu.desktop
+echo 'Categories=Development' >> $HOME/.local/share/applications/peppercarrot-menu.desktop
 echo 'Name=Peppercarrot Main Menu' >> $HOME/.local/share/applications/peppercarrot-menu.desktop
 echo 'Exec='$projectroot'/scripts/peppercarrot-main-menu.sh' >> $HOME/.local/share/applications/peppercarrot-menu.desktop
 echo 'Type=Application' >> $HOME/.local/share/applications/peppercarrot-menu.desktop
