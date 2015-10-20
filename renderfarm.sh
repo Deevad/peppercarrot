@@ -6,54 +6,6 @@
 
 scriptversion="5.0"
 
-# -------------------More informations ---------------
-# a script to export,clean,backup Pepper&Carrot project folder
-# Usage : launch this script in your project directory with all 
-# your *.kra pages and lang/en or lang/fr with *.SVG folders
-# Result : create and render all the files you need from the source GFX
-# ( *.Kra ) and lang ( *.SVG) backup, netexport, cleaning, generating, etc...
-
-# SETUP :
-# Eg. a project with 2 pages, 1 cover and two lang (fr and en):
-#
-# [project folder]
-#  * projectname_E01.kra = cover episode 1
-#  * projectname_E01P01.kra = page 1
-#  * projectname_E01P01.kra = page 2
-#          -> [lang]
-#                   -> [en] folder
-#                       *   projectname_E01.svg
-#                       *   projectname_E01P01.svg
-#                       *   projectname_E01P02.svg
-#                   -> [fr] folder
-#                       *   projectname_E01.svg
-#                       *   projectname_E01P01.svg
-#                       *   projectname_E01P02.svg
-#
-# HOW TO GET AN EXAMPLE FOLDER :
-# episode 7 is small, regular, and a good comic to do a first compile
-# Grab the src-gfx ZIP ( 129MB ) here : 
-# http://www.peppercarrot.com/en/static6/sources#%20Episode%2007%20:%20The%20Wish
-# extract the *.kra files inside a folder
-# then still in this folder git-clone the lang-pack in a new folder lang
-# git clone https://github.com/Deevad/peppercarrot_ep07_translation.git lang
-# then run the script to render your pages
-
-# DEPENDENCIES :
-# * Bash
-# * Imagemagick
-# * Krita (<2.9)
-# * Inkscape
-# * diff
-# * parallel
-
-# SPEC :
-# lang project use iso-code two characters.
-# Svg files have relative link to generated ../gfx_projectname_E01P01.png
-
-# Have fun!
-# -----------------------------------------------------
-
 # User preferences:
 # Optional module to activate ( 1=yes, 0=no ):
 export singlepage_generation=1
