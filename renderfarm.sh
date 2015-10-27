@@ -351,9 +351,16 @@ _update_gfx_gif_work()
       cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_hires"/"$langdir"_"$giffile"
       cp "$workingpath"/"$folder_cache"/"$giffile"  "$workingpath"/"$folder_hires"/"$folder_gfxonly"/gfx_"$giffile"
 
-      # Copy lowres PNG gfx for lang proxy SVG
-      gifframe1="$workingpath"/"$folder_cache"/"$giffile"[0]
-      convert "$gifframe1" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lang"/gfx_"$pngfile"
+      # New strategy for static image to the Gif panel alternative ( for print, for single page )
+      # Does we have an alternative PNG static file next to the Gif ?
+      if [ -f "$workingpath"/"$pngfile" ]; then
+        # Yes. We copy it.
+        cp "$workingpath"/"$pngfile" "$workingpath"/"$folder_lang"/gfx_"$pngfile"
+      else
+        # No. alternative PNG files were found, we need to auto-generate one ( using the first frame of the gif-anim).
+        gifframe1="$workingpath"/"$folder_cache"/"$giffile"[0]
+        convert "$gifframe1" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lang"/gfx_"$pngfile"
+      fi
       
       # Create a dummy file token to indicate what lang where changed
       touch "$workingpath"/"$folder_cache"/"$langdir"/need_render.txt
@@ -528,8 +535,16 @@ _create_singlepage_work()
       for giffile in *.gif; do
       pngfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".png"
       jpgfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".jpg"
-      gifframe1="$workingpath"/"$folder_cache"/"$giffile"[0]
-      convert "$gifframe1" -bordercolor white -border 0x20 -colorspace sRGB "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+      # New strategy for static image to the Gif panel alternative ( for print, for single page )
+      # Does we have an alternative PNG static file next to the Gif ?
+      if [ -f "$workingpath"/"$pngfile" ]; then
+        # Yes. We copy it.
+        cp "$workingpath"/"$pngfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+      else
+        # No. alternative PNG files were found, we need to auto-generate one ( using the first frame of the gif-anim).
+        gifframe1="$workingpath"/"$folder_cache"/"$giffile"[0]
+        convert "$gifframe1" -bordercolor white -border 0x20 -colorspace sRGB "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+      fi
       convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -quality 92% -resize "$resizejpg" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
       done
     fi
