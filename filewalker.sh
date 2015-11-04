@@ -127,7 +127,6 @@ cd "$projectroot"/webcomics
             #echo ""
             #done
 
-
           # Batch Git update them
           cd "$projectroot"/webcomics/"$gitdirectories"
           
