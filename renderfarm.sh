@@ -282,8 +282,8 @@ _update_gfx_kra_work()
       convert "$workingpath"/"$folder_cache"/gfx_"$pngfile" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lowres"/"$jpgfile"
     fi
 
-    # Update PNG hires gfx-only folder
-    cp "$workingpath"/"$folder_cache"/gfx_"$pngfile" "$workingpath"/"$folder_hires"/"$folder_gfxonly"/gfx_"$pngfile"
+    # Update Hires gfx-only folder
+    convert -strip -interlace Plane -quality 95% "$workingpath"/"$folder_cache"/gfx_"$pngfile" "$workingpath"/"$folder_hires"/"$folder_gfxonly"/gfx_"$jpgfile"
 
     # Generate low-res *.png in lang
     convert "$workingpath"/"$folder_cache"/gfx_"$pngfile" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lang"/gfx_"$pngfile"
@@ -450,16 +450,16 @@ _update_lang_work()
         # Copy the fresh SVG in the cache, along the Hi-Res PNG gfx, for a hi-res rendering
         cp "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile"
 
-        # Final hi-res PNG print with lang prefix
+        # Generate lossless work PNG
         inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
         
-        # Optimize PNG test : Note , -define png:compression-strategy=zs , -define png:compression-level=zl, -define png:compression-filter=fm
-        convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -define png:compression-strategy=3  -define png:compression-level=9 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+        # Compress lossless work PNG in Hi-Res JPG
+        convert -strip -interlace Plane -quality 95% "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
 
-        # Save PNG full page on hires
-        cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" "$workingpath"/"$folder_hires"/"$langdir"_"$pngfile"
+        # Copy Hi-res JPG to hi-res final folder
+        cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_hires"/"$langdir"_"$jpgfile"
 
-        # Crop our hi-res PNG pages for better online web layout
+        # Crop our lossless work PNG pages in cache to prepare low-res JPG ( cropping exessive white borders for better online web layout )
         if [ $cropping_pages = 1 ]; then
           if echo "$pngfile" | grep -q 'P[0-9][0-9]' ; then
             convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -chop 0x70 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
@@ -552,14 +552,17 @@ _create_singlepage_work()
     # Repositioning in the hi-res folder
     cd "$workingpath"/"$folder_hires"/
     
-    # Get temporary all the PNG hi-res in cache for fusion
-    cp "$langdir"*.png "$workingpath"/"$folder_cache"/"$langdir"/
+    # Create a subcache for our work
+    mkdir -p "$workingpath"/"$folder_cache"/"$langdir"/montage/
+    
+    # Get temporary all the Hi-res JPG in montage cache for fusion
+    cp "$langdir"*.jpg "$workingpath"/"$folder_cache"/"$langdir"/montage/
     
     # Repositioning to the cache/lang folder
-    cd "$workingpath"/"$folder_cache"/"$langdir"/
+    cd "$workingpath"/"$folder_cache"/"$langdir"/montage/
       
     # create the montage with imagemagick from all PNG found with a page pattern in cache folder.
-    montage -mode concatenate -tile 1x *P??.png -colorspace sRGB -quality 92% -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
+    montage -mode concatenate -tile 1x *P??.jpg -colorspace sRGB -quality 92% -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
     
     # copy the rendering in the final folder
     cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_lowres"/"$folder_singlepage"/"$langdir"_"$jpgfile"
@@ -631,10 +634,13 @@ _clean_cache()
     # Repositioning to the cache/lang folder
     cd "$workingpath"/"$folder_cache"/"$langdir"/
       
-    # clean up
+    # clean up files
     rm -f "$workingpath"/"$folder_cache"/"$langdir"/*.png
     rm -f "$workingpath"/"$folder_cache"/"$langdir"/*.jpg
     rm -f "$workingpath"/"$folder_cache"/"$langdir"/*.txt
+    
+    # clean up folders
+    rm -rf "$workingpath"/"$folder_cache"/"$langdir"/montage
     
   done
 }
