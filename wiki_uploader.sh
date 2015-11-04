@@ -47,19 +47,20 @@ fi
 
 # More utils after config loaded
 export scriptsfolder="$projectroot"/scripts
+export wiki_folder="$projectroot"/wiki
 export full_url="ftp://$configuser:$configpass@$confighost"
 
 # Set windows title
-printf "\033]0;%s\007\n" "*LFTP: Hi"
+printf "\033]0;%s\007\n" "*Wiki Update"
 
 clear
 
 _display_ui_header()
 {
   echo ""
-  echo " ${White}${PurpleBG}                                                               ${Off}"
-  echo " ${White}${PurpleBG}                     [ LFTP : Low version  ]                   ${Off}"
-  echo " ${White}${PurpleBG}                                                               ${Off}"
+  echo " ${White}${BlueBG}                                                               ${Off}"
+  echo " ${White}${BlueBG}                     [ Wiki : update  ]                        ${Off}"
+  echo " ${White}${BlueBG}                                                               ${Off}"
   echo ""
   echo " * version: $scriptversion "
   echo " * projectname: $projectname "
@@ -67,14 +68,62 @@ _display_ui_header()
   echo ""
 }
 
+_check_git()
+{
+  # Check if Git is installed on the machine
+  isgitinstalled=`type -t git | wc -l`
+  
+  if [ $isgitinstalled = 0 ]; then 
+    echo "${Green} * Please install Git ${Off}"
+  else
+  
+   echo " * Git found"
+   
+    # Position cursor inside the wiki
+    cd "$wiki_folder"
+    
+    # Check for .git folder
+    if [ -d "$projectroot"/wiki/.git ]; then
+          
+      # refresh repo to get remote informations
+      git remote update
+      
+      # git tools
+      gitlocal=$(git rev-parse @)
+      gitremote=$(git rev-parse @{u})
+      gitbase=$(git merge-base @ @{u})
+      
+      # start git update smart decisions
+      if [ $gitlocal = $gitremote ]; then
+        echo " * Wiki is up-to-date"
+          
+      elif [ $gitlocal = $gitbase ]; then
+        echo "${Blue} * Wiki is outdated${Off}"
+        echo "${Green} ==> [git] git pull ${Off}"
+        git pull
+                  
+      elif [ $gitremote = $gitbase ]; then
+        echo "${Purple} * Wiki contains commit non pushed${Off}"
+          
+      else
+        echo "${Red} * Wiki error: diverging repositories${Off}"
+      fi
+        
+    else
+      echo " * Wiki is not a Git repository ${Off}"
+    fi
+  
+  fi
+}
 _display_ui_header
+_check_git
 
 # Runtime counter: start
 script_runtime_start=$(date +"%s")
 
 ftpurl="ftp://$configuser:$configpass@$confighost"
-localdirectory="/home/deevad/peppercarrot/webcomics/"
-remotedirectory="/www/0_sources/"
+localdirectory="$wiki_folder"
+remotedirectory="/www/data/wiki/"
 
 lftp -c "set ftp:list-options -a;
 set xfer:use-temp-file yes;
@@ -86,19 +135,9 @@ mirror --use-cache \
        --no-perms \
        --reverse \
        --verbose \
-       --exclude-glob New/ \
-       --exclude-glob 0_test/ \
-       --exclude-glob 0_archives/ \
-       --exclude-glob animation/ \
-       --exclude-glob backup/ \
-       --exclude-glob cache/ \
-       --exclude-glob lang/ \
-       --exclude-glob wip/ \
-       --exclude-glob hi-res/ \
-       --exclude-glob zip/ \
-       --exclude-glob *.sh \
-       --exclude-glob *~ \
-       --exclude-glob *.kra
+       --exclude-glob .git/ \
+       --exclude-glob .gitignore \
+       --exclude-glob *~
 "
 
 # LFTP useful option for testing purpose --dry-run
@@ -114,14 +153,13 @@ echo ""
 echo " * $projectname uploaded in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec."
 
 # Notification for system when out-of-focus
-notify-send "LFTP (low)" "$projectname uploaded in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec."
+notify-send "Wiki Update" "$projectname uploaded in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec."
 
 # Windows title
-printf "\033]0;%s\007\n" "LFTP: Low"
+printf "\033]0;%s\007\n" "Wiki Update"
 
 # Task is executed inside a terminal
 # This line prevent terminal windows to be closed
 # Necessary to read log later
 echo -n " Press [Enter] to exit"
 read end
-

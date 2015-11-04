@@ -60,6 +60,7 @@ fi
 # Define absolute path to folders in usage
 export folder_webcomics="$projectroot"/webcomics
 export folder_scripts="$projectroot"/scripts
+export folder_wiki="$projectroot"/wiki
 
 # Move folder cursor to webcomic
 # zenity --info --text="Debug 1: $folder_webcomics"
@@ -83,6 +84,7 @@ _main_menu()
   items+=( "Edit All README.md" )
   items+=( "Upload FTP (low)" )
   items+=( "Upload FTP (hi)" )
+  items+=( "Update Wiki" )
   items+=( "Update .episodes-list.md" )
   items+=( "Render all episodes" )
 
@@ -223,6 +225,10 @@ elif [ "$menuchoicecleaned" = "Upload FTP (low)" ]; then
 elif [ "$menuchoicecleaned" = "Upload FTP (hi)" ]; then
   cd $folder_webcomics
   gnome-terminal --command="$folder_scripts"/hires_uploader.sh
+  
+elif [ "$menuchoicecleaned" = "Update Wiki" ]; then
+  cd $folder_wiki
+  gnome-terminal --command="$folder_scripts"/wiki_uploader.sh
       
 elif [ "$menuchoicecleaned" = "+ Add a new episode" ]; then
   cd $folder_webcomics
