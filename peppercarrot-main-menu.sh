@@ -85,11 +85,12 @@ _main_menu()
   items+=( "Upload FTP (low)" )
   items+=( "Upload FTP (hi)" )
   items+=( "Update Wiki" )
+  items+=( "Run Filewalker" )
   items+=( "Update .episodes-list.md" )
   items+=( "Render all episodes" )
 
   menuchoice=$(zenity --list --title='Pepper&Carrot Main Menu' \
-              --width=400 --height=550 --window-icon="$folder_scripts/lib/peppercarrot_icon.png" \
+              --width=400 --height=570 --window-icon="$folder_scripts/lib/peppercarrot_icon.png" \
               --text='Select an episode or an action' \
               --column='menu' "${items[@]}");
 
@@ -219,19 +220,23 @@ elif [ "$menuchoicecleaned" = "Update .episodes-list.md" ]; then
   done
   
 elif [ "$menuchoicecleaned" = "Upload FTP (low)" ]; then
-  cd $folder_webcomics
+  cd "$folder_webcomics"
   gnome-terminal --command="$folder_scripts"/lowres_uploader.sh
     
 elif [ "$menuchoicecleaned" = "Upload FTP (hi)" ]; then
-  cd $folder_webcomics
+  cd "$folder_webcomics"
   gnome-terminal --command="$folder_scripts"/hires_uploader.sh
   
 elif [ "$menuchoicecleaned" = "Update Wiki" ]; then
-  cd $folder_wiki
+  cd "$folder_wiki"
   gnome-terminal --command="$folder_scripts"/wiki_uploader.sh
+  
+elif [ "$menuchoicecleaned" = "Run Filewalker" ]; then
+  cd "$projectroot"
+  gnome-terminal --command="$folder_scripts"/filewalker.sh
       
 elif [ "$menuchoicecleaned" = "+ Add a new episode" ]; then
-  cd $folder_webcomics
+  cd "$folder_webcomics"
   gnome-terminal --command="$folder_scripts"/episode-creator.sh
 
 else 
