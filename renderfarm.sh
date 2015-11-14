@@ -505,6 +505,7 @@ _update_lang()
 
 _create_singlepage_work()
 {
+    
   cd "$workingpath"/"$folder_lang"/
   langdir=$1
   
@@ -517,43 +518,48 @@ _create_singlepage_work()
   # Create the name, relative to the cover kra name.
   for krafile in *.kra; do
     if [ "$krafile" = *_E??.kra ]; then
-      jpgfile=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')"XXL.jpg"
+      singlepagefile=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')"XXL.jpg"
     fi
   done
+  
+  # Create a subcache for our work
+  mkdir -p "$workingpath"/"$folder_cache"/"$langdir"/montage/
   
   # Repositioning to the cache/lang folder
   cd "$workingpath"/"$folder_cache"/"$langdir"/
       
   # if dummy file token exist in lang folder cached, we need to re-render then clean dummy.
   if [ -f "$workingpath"/"$folder_cache"/"$langdir"/need_render.txt ]; then
-    echo "${Green} ==> [$langdir] $langdir_$jpgfile rendered${Off}"
+    echo "${Green} ==> [$langdir] $langdir_$singlepagefile rendered${Off}"
     
     # If project get updated *.gif , copy before generating the single page, but as static PNG to be catched by the montage wild mask *.png loop
     cd "$workingpath"
     getamountofgif=`ls -1 *.gif 2>/dev/null | wc -l`
+    
     if [ $getamountofgif != 0 ]; then 
+    
       for giffile in *.gif; do
       pngfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".png"
       jpgfile=$(echo $giffile|sed 's/\(.*\)\..\+/\1/')".jpg"
       # New strategy for static image to the Gif panel alternative ( for print, for single page )
-      # Does we have an alternative PNG static file next to the Gif ?
-      if [ -f "$workingpath"/"$pngfile" ]; then
-        # Yes. We copy it.
-        cp "$workingpath"/"$pngfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
-      else
-        # No. alternative PNG files were found, we need to auto-generate one ( using the first frame of the gif-anim).
-        gifframe1="$workingpath"/"$folder_cache"/"$giffile"[0]
-        convert "$gifframe1" -bordercolor white -border 0x20 -colorspace sRGB "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
-      fi
-      convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -quality 92% -resize "$resizejpg" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
+      
+        # Does we have an alternative static file next to the Gif ?
+        if [ -f "$workingpath"/"$pngfile" ]; then
+          # Yes. We copy it.
+          cp "$workingpath"/"$pngfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+        else
+          # No. Alternative static files not found, we need to generate one ( using the first frame of the gif-anim).
+          gifframe1="$workingpath"/"$folder_cache"/"$giffile"[0]
+          convert "$gifframe1" -bordercolor white -border 0x20 -colorspace sRGB "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+        fi
+        
+      # convert the result to the hi-res JPG format
+      convert "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -colorspace sRGB -quality 92% -resize "$resizejpg" "$workingpath"/"$folder_cache"/"$langdir"/montage/"$langdir"_"$jpgfile"
       done
     fi
     
     # Repositioning in the hi-res folder
     cd "$workingpath"/"$folder_hires"/
-    
-    # Create a subcache for our work
-    mkdir -p "$workingpath"/"$folder_cache"/"$langdir"/montage/
     
     # Get temporary all the Hi-res JPG in montage cache for fusion
     cp "$langdir"*.jpg "$workingpath"/"$folder_cache"/"$langdir"/montage/
@@ -562,13 +568,13 @@ _create_singlepage_work()
     cd "$workingpath"/"$folder_cache"/"$langdir"/montage/
       
     # create the montage with imagemagick from all PNG found with a page pattern in cache folder.
-    montage -mode concatenate -tile 1x *P??.jpg -colorspace sRGB -quality 92% -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
+    montage -mode concatenate -tile 1x *P??.jpg -colorspace sRGB -quality 92% -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$singlepagefile"
     
     # copy the rendering in the final folder
-    cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_lowres"/"$folder_singlepage"/"$langdir"_"$jpgfile"
+    cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$singlepagefile" "$workingpath"/"$folder_lowres"/"$folder_singlepage"/"$langdir"_"$singlepagefile"
     
   else
-    echo " ==> [$langdir] $langdir_$jpgfile is up-to-date."
+   echo " ==> [$langdir] $langdir_$jpgfile is up-to-date."
   fi
 }
 _create_singlepage()
