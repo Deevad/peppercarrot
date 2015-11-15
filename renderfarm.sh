@@ -276,13 +276,13 @@ _update_gfx_kra_work()
     
     # Extract the PNG hi-res directly from *.kra
     # Create a tmp folder for unzipping
-    mkdir -p /tmp/"kra_tmpfolder"
+    mkdir -p /tmp/"$kra_tmpfolder"
     # Unzipping the target file
-    unzip -j "$workingpath"/"$krafile" "mergedimage.png" -d /tmp/"kra_tmpfolder"
+    unzip -j "$workingpath"/"$krafile" "mergedimage.png" -d /tmp/"$kra_tmpfolder"
     # Make a PNG without Alpha, compressed to max, and a sRGB colorspace.
-    convert /tmp/"kra_tmpfolder"/"mergedimage.png" -colorspace sRGB -background white -alpha remove -define png:compression-strategy=3  -define png:compression-level=9  "$workingpath"/"$folder_cache"/gfx_"$pngfile"
+    convert /tmp/"$kra_tmpfolder"/"mergedimage.png" -colorspace sRGB -background white -alpha remove -define png:compression-strategy=3  -define png:compression-level=9  "$workingpath"/"$folder_cache"/gfx_"$pngfile"
     # Job done, remove the tmp folder.
-    rm -rf /tmp/"kra_tmpfolder"
+    rm -rf /tmp/"$kra_tmpfolder"
 
     # Check if we are not processing the cover/thumbnail, comparing with a mask pattern.
     if [ "$krafile" = *_E??.kra ]; then
