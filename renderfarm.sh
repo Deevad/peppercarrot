@@ -248,6 +248,7 @@ _update_gfx_kra_work()
   pngfile=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')".png"
   jpgfile=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')".jpg"
   svgfile=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')".svg"
+  kra_tmpfolder=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')""
   jpgfileversionning=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')_$version".jpg"
   rendermefile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')"-renderme.txt"
 
@@ -270,12 +271,18 @@ _update_gfx_kra_work()
     # Update the cache with a new version
     md5sum "$krafile" > "$workingpath"/"$folder_cache"/"$txtfile"
     
-    # Generate PNG hi-res in cache
-    krita --export "$workingpath"/"$krafile" --export-filename "$workingpath"/"$folder_cache"/gfx_"$pngfile"
+    # Generate PNG hi-res in cache, Krita version (removed but kept in case of...)
+    # krita --export "$workingpath"/"$krafile" --export-filename "$workingpath"/"$folder_cache"/gfx_"$pngfile"
     
-    # test
-    # unzip -j "$workingpath"/"$krafile" "mergedimage.png" -d "$workingpath"/"$folder_cache"
-    # mv "$workingpath"/"$folder_cache"/"mergedimage.png" "$workingpath"/"$folder_cache"/gfx_"$pngfile"
+    # Extract the PNG hi-res directly from *.kra
+    # Create a tmp folder for unzipping
+    mkdir -p /tmp/"kra_tmpfolder"
+    # Unzipping the target file
+    unzip -j "$workingpath"/"$krafile" "mergedimage.png" -d /tmp/"kra_tmpfolder"
+    # Make a PNG without Alpha, compressed to max, and a sRGB colorspace.
+    convert /tmp/"kra_tmpfolder"/"mergedimage.png" -colorspace sRGB -background white -alpha remove -define png:compression-strategy=3  -define png:compression-level=9  "$workingpath"/"$folder_cache"/gfx_"$pngfile"
+    # Job done, remove the tmp folder.
+    rm -rf /tmp/"kra_tmpfolder"
 
     # Check if we are not processing the cover/thumbnail, comparing with a mask pattern.
     if [ "$krafile" = *_E??.kra ]; then
