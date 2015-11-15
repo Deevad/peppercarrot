@@ -83,6 +83,7 @@ lcd '$localdirectory';
 cd '$remotedirectory';
 mirror --use-cache \
        --delete \
+       --use-pget-n=10 \
        --no-perms \
        --reverse \
        --verbose \

@@ -85,6 +85,7 @@ mirror --use-cache \
        --delete \
        --no-perms \
        --reverse \
+       --use-pget-n=10 \
        --verbose \
        --exclude-glob New/ \
        --exclude-glob 0_test/ \
