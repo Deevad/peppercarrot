@@ -302,7 +302,7 @@ _update_gfx_kra_work()
     cp "$workingpath"/"$krafile" "$workingpath"/"$folder_backup"/"$version"_"$krafile"
 
     # Generate WIP jpg : full res, JPG, 92%, no lang
-    convert "$workingpath"/"$folder_cache"/gfx_"$pngfile" -colorspace sRGB -background white -alpha remove -quality 92% "$workingpath"/"$folder_wip"/"$jpgfileversionning"
+    convert "$workingpath"/"$folder_cache"/gfx_"$pngfile" -colorspace sRGB -background white -alpha remove -quality 95% "$workingpath"/"$folder_wip"/"$jpgfileversionning"
 
     cd "$workingpath"/"$folder_lang"/
 
