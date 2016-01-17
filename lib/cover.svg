@@ -12,7 +12,7 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r"
    width="1100"
    height="765"
    sodipodi:docname="cover.svg">
@@ -125,6 +125,37 @@
          operator="over"
          result="composite2" />
     </filter>
+    <filter
+       style="color-interpolation-filters:sRGB"
+       id="filter3836-1-7"
+       inkscape:label="Drop Shadow">
+      <feFlood
+         id="feFlood3838-1-8"
+         flood-opacity="0.94664031620553357"
+         flood-color="rgb(0,0,0)"
+         result="flood" />
+      <feComposite
+         id="feComposite3840-2-5"
+         in2="SourceGraphic"
+         in="flood"
+         operator="in"
+         result="composite1" />
+      <feGaussianBlur
+         id="feGaussianBlur3842-6-1"
+         stdDeviation="5"
+         result="blur" />
+      <feOffset
+         id="feOffset3844-4-8"
+         dx="2.0242914979757103"
+         dy="4.4534412955465683"
+         result="offset" />
+      <feComposite
+         id="feComposite3846-2-7"
+         in2="offset"
+         in="SourceGraphic"
+         operator="over"
+         result="composite2" />
+    </filter>
   </defs>
   <sodipodi:namedview
      pagecolor="#ffffff"
@@ -140,7 +171,7 @@
      id="namedview4"
      showgrid="false"
      inkscape:zoom="0.90380222"
-     inkscape:cx="483.68605"
+     inkscape:cx="307.20939"
      inkscape:cy="354.37059"
      inkscape:window-x="1920"
      inkscape:window-y="0"
@@ -152,29 +183,28 @@
      inkscape:label="artwork"
      sodipodi:insensitive="true" />
   <image
-     sodipodi:absref="/home/deevad/Scripts/lib/peppercarrot_creator/../gfx_Pepper-and-Carrot_by-David-Revoy_EYY.png"
+     sodipodi:absref="/home/deevad/peppercarrot/scripts/lib/../gfx_Pepper-and-Carrot_by-David-Revoy_EYY.png"
      xlink:href="../gfx_Pepper-and-Carrot_by-David-Revoy_EYY.png"
-     y="0"
-     x="0"
-     id="image10"
+     width="1100"
      height="765"
-     width="1100" />
+     id="image10"
+     x="0"
+     y="0" />
   <g
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="txt">
-    <flowRoot
+    <text
        xml:space="preserve"
-       id="flowRoot2987"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;filter:url(#filter3836-1);font-family:Arial;-inkscape-font-specification:Arial"
-       transform="matrix(0.69723552,0,0,0.69723552,-804.10682,242.3529)"><flowRegion
-         id="flowRegion2989"><rect
-           id="rect2991"
-           width="2405.8"
-           height="107.55731"
-           x="739.22333"
-           y="644.36664"
-           style="fill:#ffffff;fill-opacity:1" /></flowRegion><flowPara
-         id="flowPara2993"
-         style="font-size:68.8433075px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;text-anchor:middle;fill:#ffffff;fill-opacity:1;font-family:Lavi;-inkscape-font-specification:Lavi">Episode !XX : Your title here</flowPara></flowRoot>  </g>
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.36682606px;line-height:125%;font-family:Arial;-inkscape-font-specification:Arial;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:none;filter:url(#filter3836-1-7)"
+       x="202.02403"
+       y="736.31476"
+       id="text4183"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4185"
+         x="202.02403"
+         y="736.31476"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:48px;font-family:Lavi;-inkscape-font-specification:Lavi">Episode !XX : The Title here</tspan></text>
+  </g>
 </svg>
