@@ -56,6 +56,16 @@ fi
 cd "$projectroot"/www/peppercarrot
 ln -s ../../webcomics/ 0_sources
 
+# artwork subfolder, create a quick access at root
+if [ -d "$projectroot"/0ther/artworks/ ]; then
+  echo "${Green}* $projectroot/0ther/artworks/ found${Off}"
+else
+  echo "${Red}* $projectroot/0ther/artworks/ not found${Off}"
+  mkdir -p "$projectroot"/0ther/artworks/
+fi
+cd "$projectroot"
+ln -s webcomics/0ther/artworks/ Artworks
+
 
 # wiki GIT for as data/wiki in website
 if [ -d "$projectroot"/www/peppercarrot/data ]; then
