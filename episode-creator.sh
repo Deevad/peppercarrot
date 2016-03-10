@@ -94,6 +94,10 @@ _Creation_job()
        mkdir -p New/lang/fr
        cd "$folder_webcomics"/New
        
+       # Symlink, to get a mirror of the french version in english.
+       # Workaround for www.peppercarrot CMS, fallback in english in case of missing page.
+       ln -s "$folder_webcomics"/New/lang/fr "$folder_webcomics"/New/lang/en
+       
        #cover
        echo "${Blue}==> ${Yellow} generating cover     :${Off} Pepper-and-Carrot_by-David-Revoy_E"$episodenumber" "
        cp "$libpath"/cover.kra "$folder_webcomics"/New/Pepper-and-Carrot_by-David-Revoy_E"$episodenumber".kra
