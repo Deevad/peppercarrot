@@ -15,7 +15,7 @@
    inkscape:version="0.91 r"
    width="2481"
    height="4503"
-   sodipodi:docname="Pepper-and-Carrot_by-David-Revoy_E13P07.svg">
+   sodipodi:docname="credit.svg">
   <metadata
      id="metadata8">
     <rdf:RDF>
@@ -44,7 +44,7 @@
      id="namedview4"
      showgrid="false"
      inkscape:zoom="0.2602153"
-     inkscape:cx="1393.7987"
+     inkscape:cx="1326.5467"
      inkscape:cy="3510.0363"
      inkscape:window-x="0"
      inkscape:window-y="27"
@@ -66,15 +66,15 @@
      transform="translate(0,1024)"
      sodipodi:insensitive="true">
     <image
-       sodipodi:absref="/home/deevad/peppercarrot/webcomics/New/lang/en/../gfx_Pepper-and-Carrot_by-David-Revoy_E13P07.png"
-       xlink:href="../gfx_Pepper-and-Carrot_by-David-Revoy_E13P07.png"
-       y="-1023.3771"
-       x="0.54707891"
-       id="image4223"
-       style="image-rendering:optimizeQuality"
-       preserveAspectRatio="none"
+       sodipodi:absref="/home/deevad/peppercarrot/scripts/lib/../gfx_Pepper-and-Carrot_by-David-Revoy_EYYPXX.png"
+       xlink:href="../gfx_Pepper-and-Carrot_by-David-Revoy_EYYPXX.png"
+       width="2481.4438"
        height="4504.5391"
-       width="2481.4438" />
+       preserveAspectRatio="none"
+       style="image-rendering:optimizeQuality"
+       id="image4223"
+       x="0.54707891"
+       y="-1023.3771" />
   </g>
   <g
      inkscape:groupmode="layer"
@@ -121,7 +121,7 @@
          x="1240.9395"
          y="-695.94409"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;font-family:Lavi;-inkscape-font-specification:Lavi"
-         id="tspan4219">For this episode, thank you to the 602 Patrons:</tspan></text>
+         id="tspan4219">For this episode, thank you to the XXX Patrons:</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.29317284px;line-height:125%;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;display:inline;fill:#000000;fill-opacity:1;stroke:none"
