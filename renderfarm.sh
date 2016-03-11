@@ -270,7 +270,7 @@ _update_gfx_kra_work()
     # Unzipping the target file
     unzip -j "$workingpath"/"$krafile" "mergedimage.png" -d /tmp/"$kra_tmpfolder"
     # Make a PNG without Alpha, compressed to max, and a sRGB colorspace.
-    convert /tmp/"$kra_tmpfolder"/"mergedimage.png" -colorspace sRGB -background white -alpha remove -define png:compression-strategy=3  -define png:compression-level=9  "$workingpath"/"$folder_cache"/gfx_"$pngfile"
+    convert /tmp/"$kra_tmpfolder"/"mergedimage.png" -colorspace sRGB -background white -alpha remove -define png:compression-strategy=3 -define png:color-type=2 -define png:compression-level=9  "$workingpath"/"$folder_cache"/gfx_"$pngfile"
     # Job done, remove the tmp folder.
     rm -rf /tmp/"$kra_tmpfolder"
 
@@ -451,7 +451,7 @@ _update_lang_work()
         inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
         
         # Compress lossless work PNG in Hi-Res JPG
-        convert -strip -interlace Plane -quality 95% "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
+        convert -strip -interlace Plane -colorspace sRGB -quality 95% "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
 
         # Copy Hi-res JPG to hi-res final folder
         cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_hires"/"$langdir"_"$jpgfile"
@@ -547,7 +547,7 @@ _create_singlepage_work()
         else
           # No. Alternative static files not found, we need to generate one ( using the first frame of the gif-anim).
           gifframe1="$workingpath"/"$folder_cache"/"$giffile"[0]
-          convert "$gifframe1" -bordercolor white -border 0x20 -colorspace sRGB "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+          convert "$gifframe1" -bordercolor white -border 0x20 -colorspace sRGB -define png:color-type=2 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
         fi
         
       # convert the result to the hi-res JPG format
