@@ -4,9 +4,9 @@
 #: Author      : David REVOY < info@davidrevoy.com >, Mjtalkiewicz (aka Player_2)
 #: License     : GPL
 
-scriptversion="0.2"
+scriptversion="1.0b"
 
-# a Bash script to install all the source of Pepper&Carrot, from remote/online sources.
+# a Bash script to install all the source of Pepper&Carrot inside a folder
 # Usage : Launch the script on a terminal, and follow the instructions.
 
 # Dependencies needed:
@@ -38,7 +38,7 @@ clear
 
 echo ""
 echo " ${Yellow}${PurpleBG}                                                                        ${Off}"
-echo " ${Yellow}${PurpleBG}              -= Pepper&Carrot Install and Update =-                    ${Off}"
+echo " ${Yellow}${PurpleBG}                 -= Pepper&Carrot Installer =-                          ${Off}"
 echo " ${Yellow}${PurpleBG}                                                                        ${Off}"
 echo " ${Yellow}${PurpleBG}                          /|_____|\                                     ${Off}"
 echo " ${Yellow}${PurpleBG}                         /  ' ' '  \                                    ${Off}"
@@ -57,8 +57,9 @@ echo ""
 # it store: path + ftp login and password
 if [ -f "$scriptpath"/config.sh ]; then
   source "$scriptpath"/config.sh
-  echo "${Green} * config.sh found${Off}"
-  echo "${Green} * Welcome $configuser ${Off}"
+  echo "* config.sh found"
+  echo ""
+  echo "${Green}   FTP user: $configuser ${Off}"
 else
   echo "${Red} * config.sh not found, creating it${Off}"
   # Write file
@@ -88,17 +89,20 @@ script_runtime_start=$(date +"%s")
 
 cd "$projectroot"
 
-echo "${Green} * install path = $projectroot ${Off}"
+echo "${Green}   Install path: $projectroot ${Off}"
+echo ""
+echo "   Is everything correct? "
 echo ""
 echo -n "   [Enter] to continue, [Ctrl+C] to cancel."
 read end
 echo ""
 
-# Start of job
-# ============
+# Start with repositories
+# =======================
 echo ""
-echo "${Yellow} ==> Starting job for the repositories ${Off}"
-echo ""
+echo "${Yellow} [ REPOSITORIES ] ${Off}"
+echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+
 # Install a pretty launcher, for the OS menu.
   if [ -f $HOME/.local/share/applications/peppercarrot-menu.desktop ]; then
     echo " * $HOME/.local/share/applications/peppercarrot-menu.desktop found" 
@@ -161,8 +165,12 @@ echo ""
     mkdir webcomics
   fi
 
-# Retrieve a fresh list of episode from server
-  wget -q http://www.peppercarrot.com/0_sources/.episodes-list.md -O "$projectroot"/webcomics/.episodes-list.md
+echo ""
+echo "${Yellow} [ DATABASE ] ${Off}"
+echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+  # Retrieve a fresh list of episode from server
+  echo "*  Downloading http://www.peppercarrot.com/0_sources/.episodes-list.md"
+  wget http://www.peppercarrot.com/0_sources/.episodes-list.md -O "$projectroot"/webcomics/.episodes-list.md
   # parse it as an array
   cd "$projectroot"/webcomics/
   readarray input < .episodes-list.md
@@ -170,44 +178,107 @@ echo ""
 # Big loop on episode published so far
 # Creating and updating episodes
 echo ""
-echo "${Yellow} ==> Starting big loop on all episode published ${Off}"
-echo ""
+echo "${Yellow} [ EPISODES ] ${Off}"
+echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
 
   for episodes in "${input[@]}"; do
     episodecleanstring=$(echo $episodes | sed -e 's/\r//g')
-    echo "${Yellow}  => $episodes ${Off}"
-    cd "$projectroot"/webcomics/
     
       if [ -d "$projectroot"/webcomics/"$episodecleanstring" ]; then
-        echo "  * folder exist. Auto-skip"
-        # to-do: update, check sanity
-        echo ""
-        echo ""
+        echo "* $episodecleanstring found"
+
+        # folder basic sanity check
+        if [ ! -d "$projectroot"/webcomics/"$episodecleanstring"/lang/.git ]; then
+          echo "${Green}  lang is missing ${Off}"
+        fi
+
+        if [ ! -d "$projectroot"/webcomics/"$episodecleanstring"/zip ]; then
+          echo "${Green}  zip is missing ${Off}"
+        fi
+ 
       else
-        echo "${Green}  * folder doesn't exist. Downloading and setting up. Please wait while downloading.${Off}"
-        cd "$projectroot"/webcomics/
-        mkdir $episodecleanstring
-        cd $episodecleanstring
+        echo "${Green}* $episodecleanstring is missing ${Off}"
+        echo "Downloading and setting up. Please wait while downloading."
+        mkdir -p "$projectroot"/webcomics/"$episodecleanstring"
         # trim folder name to keep only the episode number
-          episode_number=${episodecleanstring:2:2}
-        # clone the lang folder
-          git clone https://github.com/Deevad/peppercarrot_ep"$episode_number"_translation.git lang
-        # get *.kra artwork big zip of sources 
+        episode_number=${episodecleanstring:2:2}
+
+        # GIT: clone the lang folder
+        echo "[GIT] cloning https://github.com/Deevad/peppercarrot_ep"$episode_number"_translation.git"
+        git clone https://github.com/Deevad/peppercarrot_ep"$episode_number"_translation.git "$projectroot"/webcomics/"$episodecleanstring"/lang
+
+        # WGET: get *.kra artwork big zip of sources
+        echo "[WGET] Downloading http://www.peppercarrot.com/0_sources/"$episodecleanstring"/zip/"$episodecleanstring".zip"
         # wget needs URL string compatible
-          episode_url=$(echo "$episodecleanstring" | sed -e 's/%/%25/g' -e 's/ /%20/g' -e 's/!/%21/g' -e 's/"/%22/g' -e 's/#/%23/g' -e 's/\$/%24/g' -e 's/\&/%26/g' -e 's/'\''/%27/g' -e 's/(/%28/g' -e 's/)/%29/g' -e 's/\*/%2a/g' -e 's/+/%2b/g' -e 's/,/%2c/g' -e 's/-/%2d/g' -e 's/\./%2e/g' -e 's/\//%2f/g' -e 's/:/%3a/g' -e 's/;/%3b/g' -e 's//%3e/g' -e 's/?/%3f/g' -e 's/@/%40/g' -e 's/\[/%5b/g' -e 's/\\/%5c/g' -e 's/\]/%5d/g' -e 's/\^/%5e/g' -e 's/_/%5f/g' -e 's/`/%60/g' -e 's/{/%7b/g' -e 's/|/%7c/g' -e 's/}/%7d/g' -e 's/~/%7e/g')
-          wget http://www.peppercarrot.com/0_sources/"$episode_url"/zip/"$episode_url".zip
-        # unzip the result
-          unzip "$episodecleanstring.zip"
-        # move the zip in the right location
-          mkdir zip
-          mv "$episodecleanstring".zip zip/"$episodecleanstring".zip
-        # clean-up in case of multiple failed attempt of wget ( as zip1 , zip2 etc... )
-          rm *.zip*
-        echo "${Green} * work for $episodeclean done.${Off}"
+        episode_url=$(echo "$episodecleanstring" | sed -e 's/%/%25/g' -e 's/ /%20/g' -e 's/!/%21/g' -e 's/"/%22/g' -e 's/#/%23/g' -e 's/\$/%24/g' -e 's/\&/%26/g' -e 's/'\''/%27/g' -e 's/(/%28/g' -e 's/)/%29/g' -e 's/\*/%2a/g' -e 's/+/%2b/g' -e 's/,/%2c/g' -e 's/-/%2d/g' -e 's/\./%2e/g' -e 's/\//%2f/g' -e 's/:/%3a/g' -e 's/;/%3b/g' -e 's//%3e/g' -e 's/?/%3f/g' -e 's/@/%40/g' -e 's/\[/%5b/g' -e 's/\\/%5c/g' -e 's/\]/%5d/g' -e 's/\^/%5e/g' -e 's/_/%5f/g' -e 's/`/%60/g' -e 's/{/%7b/g' -e 's/|/%7c/g' -e 's/}/%7d/g' -e 's/~/%7e/g')
+        mkdir -p "$projectroot"/webcomics/"$episodecleanstring"/zip
+        wget http://www.peppercarrot.com/0_sources/"$episode_url"/zip/"$episode_url".zip -O "$projectroot"/webcomics/"$episodecleanstring"/zip/"$episodecleanstring".zip
+        if [ -f "$projectroot"/webcomics/"$episodecleanstring"/zip/"$episodecleanstring".zip ]; then
+          echo "  * zip file downloaded"
+          echo "[UNZIP] Extract zipped *.kra artworks"
+          unzip "$projectroot"/webcomics/"$episodecleanstring"/zip/"$episodecleanstring".zip -d "$projectroot"/webcomics/"$episodecleanstring"
+          echo "${Green}[DONE] ${Off}"
+        else
+          echo "${Red}[ERROR] file couldn't be downloaded${Off}"
+        fi
+
         echo ""
         echo ""
       fi 
   done
+
+## Symlink everything to finish the instalation:
+echo ""
+echo "${Yellow} [ SYMLINKS ] ${Off}"
+echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+
+# 0_sources: symlink all webcomics to the root of the local website
+if [ -d "$projectroot"/www/peppercarrot/0_sources ]; then
+  echo "* $projectroot/www/peppercarrot/0_sources found"
+else
+  echo "${Green}* $projectroot/www/peppercarrot/0_sources not found${Off}"
+  echo "${Yellow} => creating symlink ${Off}"
+  mkdir -p "$projectroot"/www/peppercarrot
+  ln -s "$projectroot"/webcomics/ $projectroot/www/peppercarrot/0_sources
+fi
+
+# Artworks: symlink artwork at root inside the webcomic/0ther folder to get sync via FTP on the fly.
+if [ -d "$projectroot"/webcomics/0ther/artworks ]; then
+  echo "* $projectroot/webcomics/0ther/artworks found"
+else
+  echo "${Green}* $projectroot/webcomics/0ther/artworks not found${Off}"
+  echo "${Yellow} => creating symlink ${Off}"
+  ln -s "$projectroot"/webcomics/0ther/artworks/ "$projectroot"/artworks
+fi
+
+# Wiki: symlink root wiki folder inside the local website
+if [ -d "$projectroot"/www/peppercarrot/data/wiki ]; then
+  echo "* $projectroot/www/peppercarrot/data/wiki found"
+else
+  echo "${Green}* $projectroot/www/peppercarrot/data/wiki not found${Off}"
+  echo "${Yellow} => creating symlink ${Off}"
+  mkdir -p "$projectroot"/www/peppercarrot/data
+  ln -s "$projectroot"/wiki "$projectroot"/www/peppercarrot/data/wiki
+fi
+
+# Fonts: symlink git folder to a subfolder into local/share of active user. So the fonts are in use.
+if [ -d $HOME/.local/share/fonts/peppercarrot-fonts ]; then
+  echo "* $HOME/.local/share/fonts/peppercarrot-fonts found"
+else
+  echo "${Green}* $HOME/.local/share/fonts/peppercarrot-fonts not found${Off}"
+  echo "${Yellow} => creating symlink ${Off}"
+  ln -s "$projectroot"/fonts $HOME/.local/share/fonts/peppercarrot-fonts
+fi
+
+# Www-lang: symlink git website-translation located at root of the project folder to the local website code.
+if [ -d "$projectroot"/www/peppercarrot/themes/peppercarrot-theme_v2/lang ]; then
+  echo "* $projectroot/www/peppercarrot/themes/peppercarrot-theme_v2/lang found"
+else
+  echo "${Green}* $projectroot/www/peppercarrot/themes/peppercarrot-theme_v2/lang not found${Off}"
+  echo "${Yellow} => creating symlink ${Off}"
+  mkdir -p "$projectroot"/www/peppercarrot/themes/peppercarrot-theme_v2
+  sudo ln -s "$projectroot"/www-lang "$projectroot"/www/peppercarrot/themes/peppercarrot-theme_v2/lang
+fi
 
 # Script ending. Debriefing.
 # Runtime counter: end and math
@@ -216,10 +287,10 @@ diff_runtime=$(($script_runtime_end-$script_runtime_start))
 
 # End User Interface messages
 echo ""
-echo " * Pepper&Carrot installed in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec."
+echo " * Script did the job in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec."
 
 # Notification for system when out-of-focus
-notify-send "Installer" "all task done in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec."
+notify-send "Install.sh" "all task done in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec."
 
 echo -n " Press [Enter] to exit"
 read end
