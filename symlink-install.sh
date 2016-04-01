@@ -1,6 +1,8 @@
 #!/bin/bash
-# autogenerate the symlink for the working folder
-scriptversion="0.1alpha"
+# Autogenerate a list of symlink as post install routine.
+# To-do: merge it with install.sh
+
+scriptversion="0.2alpha"
 
 # Utils
 export scriptpath="`dirname \"$0\"`"
@@ -45,48 +47,54 @@ else
   exit
 fi
 
-
-# webcomic GIT as the 0_sources in website
-if [ -d "$projectroot"/www/peppercarrot ]; then
-  echo "${Green}* $projectroot/www/peppercarrot found${Off}"
+# 0_sources: symlink all webcomics to the root of the local website
+if [ -d "$projectroot"/www/peppercarrot/0_sources ]; then
+  echo "${Green}* $projectroot/www/peppercarrot/0_sources found${Off}"
 else
-  echo "${Red}* $projectroot/www/peppercarrot not found${Off}"
+  echo "${Red}* $projectroot/www/peppercarrot/0_sources not found${Off}"
+  echo "${Yellow} => creating symlink ${Off}"
   mkdir -p "$projectroot"/www/peppercarrot
+  ln -s "$projectroot"/webcomics/ $projectroot/www/peppercarrot/0_sources
 fi
-cd "$projectroot"/www/peppercarrot
-ln -s ../../webcomics/ 0_sources
 
-# artwork subfolder, create a quick access at root
-if [ -d "$projectroot"/0ther/artworks/ ]; then
-  echo "${Green}* $projectroot/0ther/artworks/ found${Off}"
+# Artworks: symlink artwork at root inside the webcomic/0ther folder to get sync via FTP on the fly.
+if [ -d "$projectroot"/webcomics/0ther/artworks ]; then
+  echo "${Green}* $projectroot/webcomics/0ther/artworks found${Off}"
 else
-  echo "${Red}* $projectroot/0ther/artworks/ not found${Off}"
-  mkdir -p "$projectroot"/0ther/artworks/
+  echo "${Red}* $projectroot/webcomics/0ther/artworks not found${Off}"
+  echo "${Yellow} => creating symlink ${Off}"
+  ln -s "$projectroot"/webcomics/0ther/artworks/ "$projectroot"/artworks
 fi
-cd "$projectroot"
-ln -s webcomics/0ther/artworks/ Artworks
 
-
-# wiki GIT for as data/wiki in website
-if [ -d "$projectroot"/www/peppercarrot/data ]; then
-  echo "${Green}* $projectroot/www/peppercarrot/data found${Off}"
+# Wiki: symlink root wiki folder inside the local website
+if [ -d "$projectroot"/www/peppercarrot/data/wiki ]; then
+  echo "${Green}* $projectroot/www/peppercarrot/data/wiki found${Off}"
 else
-  echo "${Red}* $projectroot/www/peppercarrot/data not found${Off}"
+  echo "${Red}* $projectroot/www/peppercarrot/data/wiki not found${Off}"
+  echo "${Yellow} => creating symlink ${Off}"
   mkdir -p "$projectroot"/www/peppercarrot/data
+  ln -s "$projectroot"/wiki "$projectroot"/www/peppercarrot/data/wiki
 fi
-cd "$projectroot"/www/peppercarrot/data
-ln -s ../../../wiki/wiki
 
-# website-translation GIT for as transla in theme/website
-if [ -d "$projectroot"/www/peppercarrot/themes/peppercarrot-theme_v2 ]; then
-  echo "${Green}* $projectroot/www/peppercarrot/themes/peppercarrot-theme_v2 found${Off}"
+# Fonts: symlink git folder to a subfolder into local/share of active user. So the fonts are in use.
+if [ -d $HOME/.local/share/fonts/peppercarrot ]; then
+  echo "${Green}* $HOME/.local/share/fonts/peppercarrot-fonts found${Off}"
 else
-  echo "${Red}* $projectroot/www/peppercarrot/themes/peppercarrot-theme_v2 not found${Off}"
-  mkdir -p "$projectroot"/www/peppercarrot/themes/peppercarrot-theme_v2
+  echo "${Red}* $HOME/.local/share/fonts/peppercarrot-fonts not found${Off}"
+  echo "${Yellow} => creating symlink ${Off}"
+  ln -s "$projectroot"/fonts/ $HOME/.local/share/fonts/peppercarrot-fonts
 fi
-cd "$projectroot"/www/peppercarrot/themes/peppercarrot-theme_v2
-sudo ln -s "$projectroot"/www-lang lang
 
-# for server localhost
-cd /var/www
-sudo ln -s "$projectroot"/www/ html
+# Www-lang: symlink git website-translation located at root of the project folder to the local website code.
+if [ -d "$projectroot"/www/peppercarrot/themes/peppercarrot-theme_v2/lang ]; then
+  echo "${Green}* $projectroot/www/peppercarrot/themes/peppercarrot-theme_v2/lang found${Off}"
+else
+  echo "${Red}* $projectroot/www/peppercarrot/themes/peppercarrot-theme_v2/lang not found${Off}"
+  echo "${Yellow} => creating symlink ${Off}"
+  mkdir -p "$projectroot"/www/peppercarrot/themes/peppercarrot-theme_v2
+  sudo ln -s "$projectroot"/www-lang "$projectroot"/www/peppercarrot/themes/peppercarrot-theme_v2/lang
+fi
+
+  echo "=====================================END==================================="
+  echo -n "Press [Enter] to exit"
+  read end
