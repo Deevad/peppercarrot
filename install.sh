@@ -97,8 +97,12 @@ echo -n "   [Enter] to continue, [Ctrl+C] to cancel."
 read end
 echo ""
 
-# Start with repositories
-# =======================
+# Start with install
+# ==================
+echo ""
+echo "${Blue} [ INSTALL ] ${Off}"
+echo "${Blue} ########################################################################## ${Off}"
+
 echo ""
 echo "${Yellow} [ REPOSITORIES ] ${Off}"
 echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
@@ -279,6 +283,237 @@ else
   mkdir -p "$projectroot"/www/peppercarrot/themes/peppercarrot-theme_v2
   sudo ln -s "$projectroot"/www-lang "$projectroot"/www/peppercarrot/themes/peppercarrot-theme_v2/lang
 fi
+
+# Second part: Update
+# ====================
+echo ""
+echo "${Blue} [ UPDATE ] ${Off}"
+echo "${Blue} ########################################################################## ${Off}"
+echo ""
+
+echo "${Yellow} [UPDATE WEBCOMICS]${Off}"
+echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+
+cd "$projectroot"/webcomics
+
+# Batch entry door to all episodes
+  for directories in */ ; do
+    gitdirectories=$directories"lang/"
+    # Does the folder got a sub lang folder existing ?
+    if [ -d "$projectroot"/webcomics/"$gitdirectories" ]; then
+        #yes
+        # is it a git repository ?
+        if [ -d "$projectroot"/webcomics/"$gitdirectories"/.git ]; then
+          
+          # entry door to batch in each webcomic directories
+          cd "$projectroot"/webcomics/"$directories"
+            # Eg. Entering in hires subfolder, and cleaning all PNG to JPG :
+            #cd hi-res
+            #for pngfile in $(find . -name '*.png')
+            #do
+            #jpgfile=$(echo $pngfile|sed 's/\(.*\)\..\+/\1/')".jpg"
+            #echo " * converting $pngfile => $jpgfile"
+            #convert -strip -interlace Plane -quality 95% "$pngfile" "$jpgfile"
+            #echo " * done"
+            #echo ""
+            #done
+            
+            #cd hi-res/gfx-only
+            #for pngfile in $(find . -name '*.png')
+            #do
+            #jpgfile=$(echo $pngfile|sed 's/\(.*\)\..\+/\1/')".jpg"
+            #echo " * converting $pngfile => $jpgfile"
+            #convert -strip -interlace Plane -quality 95% "$pngfile" "$jpgfile"
+            #echo " * done"
+            #echo ""
+            #done
+
+          # Batch Git update them
+          cd "$projectroot"/webcomics/"$gitdirectories"
+          
+          # refresh repo to get remote informations
+          git remote update
+          
+          # git tools
+          gitlocal=$(git rev-parse @)
+          gitremote=$(git rev-parse @{u})
+          gitbase=$(git merge-base @ @{u})
+          
+          # start git update smart decisions
+          if [ $gitlocal = $gitremote ]; then
+            echo "* $directories is up-to-date"
+              
+          elif [ $gitlocal = $gitbase ]; then
+            echo "${Blue} * $directories  is outdated${Off}"
+            echo "${Green} ==> [git] git pull ${Off}"
+            git pull
+            
+            # trigger an auto-render of the folder to apply the changes
+            read -p "${Green} Should we (re)render the folder now ?${Off} (y/n) " RESP
+            if [ "$RESP" = "y" ]; then
+               cd "$projectroot"/webcomics/"$gitdirectories"
+               echo "=> rendering in an external window"
+               gnome-terminal --command="$projectroot"/scripts/renderfarm.sh &
+            else
+              echo "=> don't forget to render it later."
+            fi
+
+                      
+          elif [ $gitremote = $gitbase ]; then
+            echo "${Purple} * $directories contains commit non pushed${Off}"
+              
+          else
+            echo "${Red} * $directories error: diverging repositories${Off}"
+          fi
+          
+        else
+        echo " * $directories doesn't have a Git repository ${Off}"
+        fi
+    fi
+  done
+echo ""
+echo "${Yellow} [UPDATE FONTS]${Off}"
+echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+
+directories="fonts"
+cd "$projectroot"/"$directories"
+          # refresh repo to get remote informations
+          git remote update
+          
+        if [ -d "$projectroot"/"$directories"/.git ]; then 
+        
+          # git tools
+          gitlocal=$(git rev-parse @)
+          gitremote=$(git rev-parse @{u})
+          gitbase=$(git merge-base @ @{u})
+          
+          # start git update smart decisions
+          if [ $gitlocal = $gitremote ]; then
+            echo " * $directories is up-to-date"
+              
+          elif [ $gitlocal = $gitbase ]; then
+            echo "${Blue} * $directories  is outdated${Off}"
+            echo "${Green} ==> [git] git pull ${Off}"
+            git pull
+                      
+          elif [ $gitremote = $gitbase ]; then
+            echo "${Purple} * $directories contains commit non pushed${Off}"
+              
+          else
+            echo "${Red} * $directories error: diverging repositories${Off}"
+          fi
+          
+        else
+        echo " * $directories isn't a Git repository ${Off}"
+        fi
+
+echo ""
+echo "${Yellow} [UPDATE WIKI]${Off}"
+echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+
+directories="wiki"
+cd "$projectroot"/"$directories"
+          # refresh repo to get remote informations
+          git remote update
+          
+        if [ -d "$projectroot"/"$directories"/.git ]; then 
+        
+          # git tools
+          gitlocal=$(git rev-parse @)
+          gitremote=$(git rev-parse @{u})
+          gitbase=$(git merge-base @ @{u})
+          
+          # start git update smart decisions
+          if [ $gitlocal = $gitremote ]; then
+            echo " * $directories is up-to-date"
+              
+          elif [ $gitlocal = $gitbase ]; then
+            echo "${Blue} * $directories  is outdated${Off}"
+            echo "${Green} ==> [git] git pull ${Off}"
+            git pull
+                      
+          elif [ $gitremote = $gitbase ]; then
+            echo "${Purple} * $directories contains commit non pushed${Off}"
+              
+          else
+            echo "${Red} * $directories error: diverging repositories${Off}"
+          fi
+          
+        else
+        echo " * $directories doesn't have a Git repository ${Off}"
+        fi
+
+echo ""
+echo "${Yellow} [UPDATE WWW-LANG]${Off}"
+echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+
+directories="www-lang"
+cd "$projectroot"/"$directories"
+          # refresh repo to get remote informations
+          git remote update
+          
+        if [ -d "$projectroot"/"$directories"/.git ]; then 
+        
+          # git tools
+          gitlocal=$(git rev-parse @)
+          gitremote=$(git rev-parse @{u})
+          gitbase=$(git merge-base @ @{u})
+          
+          # start git update smart decisions
+          if [ $gitlocal = $gitremote ]; then
+            echo " * $directories is up-to-date"
+              
+          elif [ $gitlocal = $gitbase ]; then
+            echo "${Blue} * $directories  is outdated${Off}"
+            echo "${Green} ==> [git] git pull ${Off}"
+            git pull
+                      
+          elif [ $gitremote = $gitbase ]; then
+            echo "${Purple} * $directories contains commit non pushed${Off}"
+              
+          else
+            echo "${Red} * $directories error: diverging repositories${Off}"
+          fi
+          
+        else
+        echo " * $directories doesn't have a Git repository ${Off}"
+        fi
+
+echo ""
+echo "${Yellow} [UPDATE SCRIPT]${Off}"
+echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+
+directories="scripts"
+cd "$projectroot"/"$directories"
+          # refresh repo to get remote informations
+          git remote update
+          
+        if [ -d "$projectroot"/"$directories"/.git ]; then 
+        
+          # git tools
+          gitlocal=$(git rev-parse @)
+          gitremote=$(git rev-parse @{u})
+          gitbase=$(git merge-base @ @{u})
+          
+          # start git update smart decisions
+          if [ $gitlocal = $gitremote ]; then
+            echo " * $directories is up-to-date"
+              
+          elif [ $gitlocal = $gitbase ]; then
+            echo "${Blue} * $directories  is outdated${Off}"
+            echo "${Green} ==> [git] git pull ${Off}"
+            git pull
+                      
+          elif [ $gitremote = $gitbase ]; then
+            echo "${Purple} * $directories contains commit non pushed${Off}"
+              
+          else
+            echo "${Red} * $directories error: diverging repositories${Off}"
+          fi
+          
+        else
+        echo " * $directories doesn't have a Git repository ${Off}"
+        fi
 
 # Script ending. Debriefing.
 # Runtime counter: end and math
