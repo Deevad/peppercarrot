@@ -81,11 +81,11 @@ _main_menu()
   fi
   items+=( "+ Add a new episode" )
   items+=( " " )
+  items+=( "Update everything" )
   items+=( "Edit All README.md" )
   items+=( "Upload FTP (low)" )
   items+=( "Upload FTP (hi)" )
   items+=( "Update Wiki" )
-  items+=( "Run Filewalker" )
   items+=( "Update .episodes-list.md" )
   items+=( "Render all episodes" )
 
@@ -231,9 +231,9 @@ elif [ "$menuchoicecleaned" = "Update Wiki" ]; then
   cd "$folder_wiki"
   gnome-terminal --command="$folder_scripts"/wiki_uploader.sh
   
-elif [ "$menuchoicecleaned" = "Run Filewalker" ]; then
+elif [ "$menuchoicecleaned" = "Update everything" ]; then
   cd "$projectroot"
-  gnome-terminal --command="$folder_scripts"/filewalker.sh
+  gnome-terminal --command="$folder_scripts"/install.sh
       
 elif [ "$menuchoicecleaned" = "+ Add a new episode" ]; then
   cd "$folder_webcomics"
