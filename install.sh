@@ -351,7 +351,7 @@ cd "$projectroot"/webcomics
             # trigger an auto-render of the folder to apply the changes
             read -p "${Green} Should we (re)render the folder now ?${Off} (y/n) " RESP
             if [ "$RESP" = "y" ]; then
-               cd "$projectroot"/webcomics/"$gitdirectories"
+               cd "$projectroot"/webcomics/"$directories"
                echo "=> rendering in an external window"
                gnome-terminal --command="$projectroot"/scripts/renderfarm.sh &
             else
