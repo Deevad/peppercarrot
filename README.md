@@ -25,7 +25,6 @@ You found the main repository of tools,resources and script to build the open-so
 Only free/libre and open-sources tools :
 * **Bash** ( >= 4.3.11 ) _Command line language in terminal._
 * **Git** ( >= 1.9.1 ) _Utility to manage distributed revision control_
-* **Krita** ( >= 2.9.8 ) _Digital painting software, for *.kra artworks comic page source files._
 * **Inkscape** ( >= 0.91 ) _Vector graphic software, for *.svg translation source files._
 * **Imagemagick** ( >= 6.7.7.10 ) _Utility to manipulate images._
 * **Zenity** ( >= 3.8.0 ) _Utility to create simple graphical user interface GTK dialog._
@@ -35,13 +34,13 @@ Only free/libre and open-sources tools :
 * **Diff** ( >= 3.3 ) _Utility to compare files,folders._
 * **Parallel** ( >= 20130922 ) _Utility to exectute jobs in parallel._
 * **Notify-send** ( >= 0.7.6 ) _Utility to send notification to operating system._
-* **Lftp** ( >= 4.6.4 ) _Utility to perform FTP transfer._
+* **Lftp** ( >= 4.6.3 ) _Utility to perform FTP transfer._
 
-Note: I'm using **Linux Mint 17.2** 64bit with Cinnamon (default). The package versions here are the one from all Ubuntu 14.04 based system (via the package manager). One exeption: **Krita**; you need to install via the [Krita Lime PPA](https://launchpad.net/~dimula73/+archive/ubuntu/krita). I'm also building Lftp from source for getting a new option, but this option is 'optionnal' and a previous version of Lftp will also work.
+Note: I'm using **Ubuntu 16.04** 64bit with Unity desktop (default). The package versions here are installed with the package manager.
 
 ## Install
 
-The script **install.sh** can auto-install all for you:
+The script **install.sh** can auto-install all for you (and also auto update/repair an instalation) :
 
 **1.** Create on your disk an empty target folder with around 50GB free space:
 ```
@@ -49,17 +48,19 @@ cd $HOME
 mkdir peppercarrot
 cd peppercarrot
 ```
-**2.** Get the install.sh file and launch it:
+**2.** Clone the repository in a folder named 'scripts' and launch the install.sh script:
 ```
-wget https://raw.githubusercontent.com/Deevad/peppercarrot/master/install.sh
-chmod +x install.sh
+git clone https://github.com/Deevad/peppercarrot.git scripts
+cd scripts
 ./install.sh
 ```
-**3.** The script should create the file **config.sh** along **install.sh** and stop inviting you to edit it:
+**3.** At the first run, the script should create a new configuration file **config.sh** along **install.sh** and stop inviting you to edit it. Here I edit it with the CLI editor 'nano' :
 ```
 nano config.sh
 ```
-Change ```export projectroot="/home/username/peppercarrot"``` to the path of your folder. Save, and launch again the script again. Voilà, time for getting a coffee in front of long instalation process.
+Change ```export projectroot="/home/username/peppercarrot"``` to the root of your instalation folder ( where you created the 'peppercarrot' folder). Save the configuration file, and launch again the script again. Voilà, time for getting a coffee in front of long instalation process.
+
+_Note: You can also optionaly setup FTP login and password in this configuration file, if you want to sync with LFTP the local rendered pages to a distant server._
 
 After install, here is how look like a basic file tree of a **Pepper&Carrot project** correctly installed :
 
@@ -80,19 +81,18 @@ peppercarrot/
 ├── wiki (git)
 └── www-lang (git)
 ```
+
 _Note: On this example, only three episodes subfolder are visible to keep the example tree compact._
 
 ## Usage
 
-After instalation, you can delete **install.sh** and **config.sh** from your root folder. They are now in the folder **scripts**. A [launcher](http://www.peppercarrot.com/data/images/lab/2015-10-15-peppercarrot-script/2015-10-15_peppercarrot-script_screenshot_000_net.jpg) was copied into your system in  ```$HOME/.local/share/applications/peppercarrot-menu.desktop``` .
+A [launcher](http://www.peppercarrot.com/data/images/lab/2015-10-15-peppercarrot-script/2015-10-15_peppercarrot-script_screenshot_000_net.jpg) was copied into your system in  ```$HOME/.local/share/applications/peppercarrot-menu.desktop``` .
 
 All operating system's menu should catch this type of launcher. So, open your menu to access **Peppercarrot main menu** ( under the programming/development category ). An [interface](http://www.peppercarrot.com/data/images/lab/2015-10-15-peppercarrot-script/2015-10-15_peppercarrot-script_screenshot_001_net.jpg) will pop-up and guide you to select an action ( eg. Select an episode, then render it ).
 
 ## Update
 
- To **Update** the project , there is no autotools: all folder needs to be updated with ```git pull``` manually.
-
- The actual repository **peppercarrot** is cloned into the folder **scripts**. By updating **scripts**, you'll receive all the new tools, including future one. All new tools will be accessible via the GUI.
+ Run again ```scripts/install.sh```, or from the launcher GUI select the option 'update everything'.
 
 
 ## License
