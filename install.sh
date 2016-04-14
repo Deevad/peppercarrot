@@ -271,6 +271,7 @@ if [ -d $HOME/.local/share/fonts/peppercarrot-fonts ]; then
 else
   echo "${Green}* $HOME/.local/share/fonts/peppercarrot-fonts not found${Off}"
   echo "${Yellow} => creating symlink ${Off}"
+  mkdir -p $HOME/.local/share/fonts
   ln -s "$projectroot"/fonts $HOME/.local/share/fonts/peppercarrot-fonts
 fi
 
