@@ -99,7 +99,8 @@ mirror --use-cache \
        --exclude-glob zip/ \
        --exclude-glob *.sh \
        --exclude-glob *~ \
-       --exclude-glob *.kra
+       --exclude-glob *.kra \
+       --exclude-glob *.blend
 "
 
 # LFTP useful option for testing purpose --dry-run
