@@ -1,13 +1,10 @@
 #!/bin/bash
 
-#: Title       : Pepper&Carrot KRArender
+#: Title       : Pepper&Carrot BLENDrender
 #: Author      : David REVOY < info@davidrevoy.com >, Mjtalkiewicz (aka Player_2)
 #: License     : GPL
 
 scriptversion="0.1"
-
-# Low-res horyzontal width, default "992x".
-export resizejpg="1920x1920"
 
 # Custom folders names:
 export folder_backup="backup"
@@ -44,7 +41,7 @@ _display_ui()
 {
   echo ""
   echo " ${White}${BlueBG}                                                                ${Off}"
-  echo " ${White}${BlueBG}                       -= KRA Renferfarm =-                     ${Off}"
+  echo " ${White}${BlueBG}                       -= Blend Renferfarm =-                   ${Off}"
   echo " ${White}${BlueBG}                                                                ${Off}"
   echo ""
   echo " * version: $scriptversion "
@@ -100,20 +97,22 @@ _dir_creation()
   fi
 }
 
-_update_gfx_kra_work()
+_update_blend_work()
 {
-  krafile=$1
+  blendfile=$1
   cd "$workingpath"
-  txtfile=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')".txt"
-  pngfile=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')".png"
-  jpgfile=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')"_by-David-Revoy.jpg"
-  zipfile=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')"_by-David-Revoy.zip"
-  kra_tmpfolder=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')""
-  jpgfileversionning=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')_$version".jpg"
+  txtfile=$(echo $blendfile|sed 's/\(.*\)\..\+/\1/')".txt"
+  pngfile=$(echo $blendfile|sed 's/\(.*\)\..\+/\1/')".png"
+  renderfile=$(echo $blendfile|sed 's/\(.*\)\..\+/\1/')"#####.png"
+  renderedfile=$(echo $blendfile|sed 's/\(.*\)\..\+/\1/')"00001.png"
+  jpgfile=$(echo $blendfile|sed 's/\(.*\)\..\+/\1/')".jpg"
+  zipfile=$(echo $blendfile|sed 's/\(.*\)\..\+/\1/')"_peppercarrot.zip"
+  blend_tmpfolder=$(echo $blendfile|sed 's/\(.*\)\..\+/\1/')""
+  jpgfileversionning=$(echo $blendfile|sed 's/\(.*\)\..\+/\1/')_$version".jpg"
   rendermefile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')"-renderme.txt"
 
-  # Read the checksum of *.kra file
-  md5read="`md5sum $krafile`"
+  # Read the checksum of *.blend file
+  md5read="`md5sum $blendfile`"
   
   # Avoid grep to fail if no file found
   if [ -f "$workingpath"/"$folder_cache"/"$txtfile" ]; then
@@ -122,43 +121,43 @@ _update_gfx_kra_work()
     touch "$workingpath"/"$folder_cache"/"$txtfile"
   fi
   
-  # Compare if actual *.kra checksum is similar to the previous one recorded on txtfile
+  # Compare if actual *.blend checksum is similar to the previous one recorded on txtfile
   if grep -q "$md5read" "$workingpath"/"$folder_cache"/"$txtfile"; then
-    echo " ==> [kra] $krafile file is up-to-date."
+    echo " ==> [blend] $blendfile file is up-to-date."
   else
-    echo "${Green} ==> [kra] $krafile is new or modified, rendered. ${Off}"
+    echo "${Green} ==> [blend] $blendfile is new or modified, rendered. ${Off}"
 
     # Update the cache with a new version
-    md5sum "$krafile" > "$workingpath"/"$folder_cache"/"$txtfile"
+    md5sum "$blendfile" > "$workingpath"/"$folder_cache"/"$txtfile"
     
-    # Generate PNG hi-res in cache, Krita version (removed but kept in case of...)
-    # krita --export "$workingpath"/"$krafile" --export-filename "$workingpath"/"$folder_cache"/gfx_"$pngfile"
+    # Render the PNG hi-res directly with Blender
+    #
+    # blender -b "$blendfile" -o "$workingpath"/"$folder_cache"/"$renderfile" --python "$workingpath"/arg.py -F PNG -f 1
+    # content of arg.py
+    # import bpy
+    #   for scene in bpy.data.scenes:
+    #   scene.render.resolution_x = 210
+    #   scene.render.resolution_y = 210
+    blender -b "$blendfile" -o "$workingpath"/"$folder_cache"/"$renderfile" -F PNG -f 1
     
-    # Extract the PNG hi-res directly from *.kra
-    # Create a tmp folder for unzipping
-    mkdir -p /tmp/"$kra_tmpfolder"
-    # Unzipping the target file
-    unzip -j "$workingpath"/"$krafile" "mergedimage.png" -d /tmp/"$kra_tmpfolder"
-    # Make a PNG without Alpha, compressed to max, and a sRGB colorspace.
-    convert /tmp/"$kra_tmpfolder"/"mergedimage.png" -colorspace sRGB -background white -alpha remove -define png:compression-strategy=3  -define png:compression-level=9  "$workingpath"/"$folder_cache"/"$pngfile"
-    # Job done, remove the tmp folder.
-    rm -rf /tmp/"$kra_tmpfolder"
+    #Simplify name
+    mv "$workingpath"/"$folder_cache"/"$renderedfile" "$workingpath"/"$folder_cache"/"$pngfile"
+    
+    # Hi-resolution
+    convert "$workingpath"/"$folder_cache"/"$pngfile" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 95% "$workingpath"/"$folder_hires"/"$jpgfile"
 
-    # Update Hires
-    convert -strip -interlace Plane -quality 95% "$workingpath"/"$folder_cache"/"$pngfile" "$workingpath"/"$folder_hires"/"$jpgfile"
-
-    # Update Lowres
-    convert "$workingpath"/"$folder_cache"/"$pngfile" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lowres"/"$jpgfile"
+    # Low-resolution
+    convert "$workingpath"/"$folder_cache"/"$pngfile" -resize 1100x900 -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lowres"/"$jpgfile"
 
     # Update Backup
-    cp "$workingpath"/"$krafile" "$workingpath"/"$folder_backup"/"$version"_"$krafile"
-
+    cp "$workingpath"/"$blendfile" "$workingpath"/"$folder_backup"/"$version"_"$blendfile"
+    
     # Update WIP
     convert "$workingpath"/"$folder_cache"/"$pngfile" -colorspace sRGB -background white -alpha remove -quality 95% "$workingpath"/"$folder_wip"/"$jpgfileversionning"
     
     # Update ZIP
     cd "$workingpath"
-    zip "$folder_zip"/"$zipfile" "$krafile"
+    zip "$folder_zip"/"$zipfile" "$blendfile"
 
   fi
 }
@@ -172,10 +171,10 @@ _update_gfx()
   echo "${Yellow} [GFX]${Off}"
   echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
   
-  # Project should contain *.kra artworks anyway
+  # Project should contain *.blend artworks anyway
   cd "$workingpath"
-  export -f _update_gfx_kra_work
-  ls -1 *.kra | parallel _update_gfx_kra_work "{}"
+  export -f _update_blend_work
+  ls -1 *.blend | parallel _update_blend_work "{}"
 }
 
 _clean_cache()
@@ -206,7 +205,7 @@ echo " * $projectname rendered in $(($diff_runtime / 60))min $(($diff_runtime % 
 echo ""
 
 # Notification for system when out-of-focus
-notify-send "KraRender" "$projectname rendered in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec."
+notify-send "blendRender" "$projectname rendered in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec."
 
 # Windows title
 printf "\033]0;%s\007\n" "Render: $projectname"
