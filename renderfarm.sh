@@ -57,7 +57,7 @@ _display_ui()
 {
   echo ""
   echo " ${White}${BlueBG}                                                                          ${Off}"
-  echo " ${White}${BlueBG}                       -= Pepper&Carrot Renferfarm =-                     ${Off}"
+  echo " ${White}${BlueBG}                       -= Pepper&Carrot Renderfarm =-                     ${Off}"
   echo " ${White}${BlueBG}                                                                          ${Off}"
   echo ""
   echo " * version: $scriptversion "
