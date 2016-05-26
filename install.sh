@@ -380,7 +380,7 @@ cd "$projectroot"/webcomics
               echo "=> rendering in an external window"
               echo ""
               echo "The script is now paused while the render happens."
-              read -p "${Pink}Press a key to continue.${Off}"
+              read -p "${Purple}Press a key to continue.${Off}"
               
             else
               echo "=> don't forget to render it later."
