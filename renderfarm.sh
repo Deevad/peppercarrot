@@ -709,8 +709,15 @@ notify-send "Pepper&Carrot Renderfarm" "$projectname rendered in $(($diff_runtim
 # Windows title
 printf "\033]0;%s\007\n" "Render: $projectname"
 
-# Task is executed inside a terminal
-# This line prevent terminal windows to be closed
-# Necessary to read log later
-echo -n " Press [Enter] to exit"
-read end
+# Task is executed inside a terminal window (pop-up)
+# This line prevent terminal windows to be auto-closed
+# and necessary to read log later, or to reload the script
+  echo "${Purple}  Press [Enter] to exit or [r then Enter] to re-render${Off}"
+  read -p "?" RESPEND
+  if [ "$RESPEND" = "r" ]; then
+    echo "=> Ready to reload!"
+    cd "$workingpath"
+    "$projectroot"/scripts/renderfarm.sh
+  else
+    echo "=> Ok.Good bye!"
+  fi
