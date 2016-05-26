@@ -11,7 +11,7 @@ scriptversion="1.0b"
 # * Gnome-terminal ( for launching task )
 
 # Custom preferences
-export texteditor="gedit"
+export texteditor="geany"
 export filebrowser="nemo"
 
 # Utils
@@ -246,13 +246,17 @@ elif [ "$menuchoicecleaned" = "Generate Markdown files" ]; then
   # fix formating double space, or extra space
   sed -i 's/  / /g' C.tmp
   sed -i 's/ :/:/g' C.tmp
+  # Mega cleanup merging thanks the python script of M1dgard:
+  "$folder_scripts"/merge_translators.py C.tmp > D.tmp
   
   # move the file to final:
-  cp C.tmp "$folder_webcomics"/CONTRIBUTORS.md
+  cp D.tmp "$folder_webcomics"/CONTRIBUTORS.md
+  
   # cleanup
   rm A.tmp
   rm B.tmp
   rm C.tmp
+  rm D.tmp
 
   
   # add the header
