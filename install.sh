@@ -318,6 +318,17 @@ cd "$projectroot"/webcomics
             # git commit -m "Fix, clean and correct contributors name for consistency"
             # git push
             
+            # # Eg. Reset the change and clean the repositories and do a clean re-render:
+            # # enter every lang dir
+            #cd "$projectroot"/webcomics/"$gitdirectories"
+            # # napalm changes
+            #git checkout -- .
+            # # enter the episode dir
+            #cd "$projectroot"/webcomics/"$directories"
+            # # Call renderfarm
+            #gnome-terminal --command="$folder_scripts"/renderfarm.sh
+            # # wait 30s before showing another windows. 
+            #sleep 30
           
             # Eg. Entering in hires subfolder, and cleaning all PNG to JPG :
             #cd hi-res
@@ -360,18 +371,20 @@ cd "$projectroot"/webcomics
             echo "${Green} ==> [git] git pull ${Off}"
             git pull
             
-            # trigger an auto-render of the folder to apply the changes
-            #read -p "${Green} Should we (re)render the folder now ?${Off} (y/n) " RESP
-            #if [ "$RESP" = "y" ]; then
-               cd "$projectroot"/webcomics/"$directories"
-               echo "=> rendering in an external window"
-               #gnome-terminal --command="$projectroot"/scripts/renderfarm.sh &
-               # rendering in the main windows
-               "$projectroot"/scripts/renderfarm.sh
-            #else
-            #  echo "=> don't forget to render it later."
-            #fi
-
+            # trigger a conditional auto-render:
+            read -p "${Green} Should we (re)render the folder now ?${Off} (y/n) " RESP
+            if [ "$RESP" = "y" ]; then
+              cd "$projectroot"/webcomics/"$directories"
+              echo "=> rendering in an external window"
+              gnome-terminal --command="$projectroot"/scripts/renderfarm.sh &
+              echo "=> rendering in an external window"
+              echo ""
+              echo "The script is now paused while the render happens."
+              read -p "${Pink}Press a key to continue.${Off}"
+              
+            else
+              echo "=> don't forget to render it later."
+            fi
                       
           elif [ $gitremote = $gitbase ]; then
             echo "${Purple} * $directories contains commit non pushed${Off}"
