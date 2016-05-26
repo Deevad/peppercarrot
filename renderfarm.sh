@@ -678,9 +678,27 @@ diff_runtime=$(($renderfarm_runtime_end-$renderfarm_runtime_start))
 echo ""
 echo " * $projectname rendered in $(($diff_runtime / 60))min $(($diff_runtime % 60))sec."
 
-# Reminder in case of SVG auto-modified
+# Action in case of SVG auto-modified by renderfarm
 if [ $svg_need_commit = 1 ]; then
-  echo " * SVG with wrong path were found and autofixed."
+  echo ""
+  echo "${Green} * SVG with wrong path were found and autofixed.${Off}"
+  echo "  Service to auto-commit this files:"
+  
+  # Position cursor inside the lang
+  cd "$workingpath"/"$folder_lang"/
+  
+  # List files modified between now and last commit
+  git diff --name-only
+  
+  # trigger an auto-commit if user want of the folder to apply the changes
+  read -p "${Green} Should we auto-commit this file and try to push them to git~master now ?${Off} (y/n) " RESP
+  if [ "$RESP" = "y" ]; then
+    git commit -am "Auto-fixed SVG" -m  "Windows path were auto-fixed to Linux path by the renderfarm (no problem if you use Windows). This process is automatic in the renderfarm of Pepper&Carrot and is here to workaround an Inkscape bug. (the Linux version can't read the path made by Windows for reasons, but the way around works fine for reasons too.)"
+    git push
+  else
+    echo "=> Ok.Don't forget to do it later then before pull-request issue happens..."
+  fi
+  
 fi
 
 echo ""
