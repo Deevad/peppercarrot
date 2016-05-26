@@ -306,8 +306,19 @@ cd "$projectroot"/webcomics
         # is it a git repository ?
         if [ -d "$projectroot"/webcomics/"$gitdirectories"/.git ]; then
           
-          # entry door to batch in each webcomic directories
+          # BATCH ENTRY DOOR : good place to batch action to do for each webcomic directories, look at the comment under for template.
           cd "$projectroot"/webcomics/"$directories"
+          
+            # # Eg. Auto-commit changes to all README.md files
+            # # A. Do your changes on all the README.md
+            # # B. Uncomment the paragraph under and customise it.
+            # # enter every lang dir
+            # cd "$projectroot"/webcomics/"$gitdirectories"
+            # git add README.md
+            # git commit -m "Fix, clean and correct contributors name for consistency"
+            # git push
+            
+          
             # Eg. Entering in hires subfolder, and cleaning all PNG to JPG :
             #cd hi-res
             #for pngfile in $(find . -name '*.png')
@@ -350,14 +361,16 @@ cd "$projectroot"/webcomics
             git pull
             
             # trigger an auto-render of the folder to apply the changes
-            read -p "${Green} Should we (re)render the folder now ?${Off} (y/n) " RESP
-            if [ "$RESP" = "y" ]; then
+            #read -p "${Green} Should we (re)render the folder now ?${Off} (y/n) " RESP
+            #if [ "$RESP" = "y" ]; then
                cd "$projectroot"/webcomics/"$directories"
                echo "=> rendering in an external window"
-               gnome-terminal --command="$projectroot"/scripts/renderfarm.sh &
-            else
-              echo "=> don't forget to render it later."
-            fi
+               #gnome-terminal --command="$projectroot"/scripts/renderfarm.sh &
+               # rendering in the main windows
+               "$projectroot"/scripts/renderfarm.sh
+            #else
+            #  echo "=> don't forget to render it later."
+            #fi
 
                       
           elif [ $gitremote = $gitbase ]; then
