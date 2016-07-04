@@ -563,9 +563,15 @@ _create_singlepage_work()
     
     # Repositioning to the cache/lang folder
     cd "$workingpath"/"$folder_cache"/"$langdir"/montage/
+    
+    # Reducing all jpeg before montage
+    for jpegmontage in *.jpg; do
+      # convert the result
+      convert "$workingpath"/"$folder_cache"/"$langdir"/montage/"$jpegmontage" -colorspace sRGB -quality 100% -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 "$workingpath"/"$folder_cache"/"$langdir"/montage/"$jpegmontage"
+    done
       
     # create the montage with imagemagick from all PNG found with a page pattern in cache folder.
-    montage -mode concatenate -tile 1x *P??.jpg -colorspace sRGB -quality 92% -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$singlepagefile"
+    montage -mode concatenate -tile 1x *P??.jpg -colorspace sRGB -quality 92% "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$singlepagefile"
     
     # copy the rendering in the final folder
     cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$singlepagefile" "$workingpath"/"$folder_lowres"/"$folder_singlepage"/"$langdir"_"$singlepagefile"
