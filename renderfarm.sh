@@ -280,7 +280,7 @@ _update_gfx_kra_work()
     fi
 
     # Update Hires gfx-only folder
-    convert -strip -interlace Plane -quality 95% "$workingpath"/"$folder_cache"/gfx_"$pngfile" "$workingpath"/"$folder_hires"/"$folder_gfxonly"/gfx_"$jpgfile"
+    convert -units PixelsPerInch -strip -interlace Plane "$workingpath"/"$folder_cache"/gfx_"$pngfile" -density 300 -colorspace sRGB -quality 95% "$workingpath"/"$folder_hires"/"$folder_gfxonly"/gfx_"$jpgfile"
 
     # Generate low-res *.png in lang
     convert "$workingpath"/"$folder_cache"/gfx_"$pngfile" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lang"/gfx_"$pngfile"
@@ -451,7 +451,7 @@ _update_lang_work()
         inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
         
         # Compress lossless work PNG in Hi-Res JPG
-        convert -strip -interlace Plane -colorspace sRGB -quality 95% "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
+        convert -units PixelsPerInch -strip -interlace Plane "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -density 300 -colorspace sRGB -quality 95% "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
 
         # Copy Hi-res JPG to hi-res final folder
         cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_hires"/"$langdir"_"$jpgfile"
