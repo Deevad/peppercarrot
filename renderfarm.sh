@@ -451,7 +451,7 @@ _update_lang_work()
         inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
         
         # Compress lossless work PNG in Hi-Res JPG
-        convert -units PixelsPerInch -strip -interlace Plane "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -density 300 -colorspace sRGB -quality 95% "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
+        convert -strip -interlace Plane -colorspace sRGB -units PixelsPerInch "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -density 300 -colorspace sRGB -background white -alpha remove -quality 95% "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
 
         # Copy Hi-res JPG to hi-res final folder
         cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_hires"/"$langdir"_"$jpgfile"
