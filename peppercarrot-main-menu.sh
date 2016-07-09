@@ -85,6 +85,7 @@ _main_menu()
   items+=( "Edit All README.md" )
   items+=( "Upload FTP (low)" )
   items+=( "Upload FTP (hi)" )
+  items+=( "Upload RSYNC-SSH (hi)" )
   items+=( "Update Wiki" )
   items+=( "Generate Markdown files" )
   items+=( "Render all episodes" )
@@ -115,6 +116,7 @@ _sub_menu()
   subitems+=( " " )
   subitems+=( "Upload FTP (low)" )
   subitems+=( "Upload FTP (hi)" )
+  subitems+=( "Upload RSYNC-SSH (hi)" )
   subitems+=( " " )
   subitems+=( "← Back" )
   
@@ -156,6 +158,10 @@ _sub_menu()
     elif [ "$submenuchoicecleaned" = "Upload FTP (hi)" ]; then
       cd $folder_webcomics
       gnome-terminal --command="$folder_scripts"/hires_uploader.sh
+      
+    elif [ "$submenuchoicecleaned" = "Upload RSYNC-SSH (hi)" ]; then
+      cd $folder_webcomics
+      gnome-terminal --command="$folder_scripts"/hires_uploader-ssh.sh
       
     else 
     
@@ -302,6 +308,10 @@ elif [ "$menuchoicecleaned" = "Upload FTP (low)" ]; then
 elif [ "$menuchoicecleaned" = "Upload FTP (hi)" ]; then
   cd "$folder_webcomics"
   gnome-terminal --command="$folder_scripts"/hires_uploader.sh
+
+elif [ "$menuchoicecleaned" = "Upload RSYNC-SSH (hi)" ]; then
+  cd $folder_webcomics
+  gnome-terminal --command="$folder_scripts"/hires_uploader-ssh.sh
   
 elif [ "$menuchoicecleaned" = "Update Wiki" ]; then
   cd "$folder_wiki"
