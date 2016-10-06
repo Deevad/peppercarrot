@@ -108,7 +108,7 @@ License [GPLv3 or later](http://gnu.org/licenses/gpl.html). This program is free
 
 #### Artworks
 Artworks, Pepper&Carrot logo and title artwork in this repository are licensed under the [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/)
- to David Revoy, [www.peppercarrot.com](www.peppercarrot.com).
+ to David Revoy, [www.peppercarrot.com](http://www.peppercarrot.com).
 
 ## Authors/Developers
 
