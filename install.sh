@@ -368,23 +368,15 @@ cd "$projectroot"/webcomics
               
           elif [ $gitlocal = $gitbase ]; then
             echo "${Blue} * $directories  is outdated${Off}"
-            echo "${Green} ==> [git] git pull ${Off}"
-            git pull
             
-            # trigger a conditional auto-render:
-            read -p "${Green} Should we (re)render the folder now ?${Off} (y/n) " RESP
-            if [ "$RESP" = "y" ]; then
-              cd "$projectroot"/webcomics/"$directories"
-              echo "=> rendering in an external window"
-              gnome-terminal --command="$projectroot"/scripts/renderfarm.sh &
-              echo "=> rendering in an external window"
-              echo ""
-              echo "The script is now paused while the render happens."
-              read -p "${Purple}Press a key to continue.${Off}"
-              
-            else
-              echo "=> don't forget to render it later."
-            fi
+            # echo "${Green} ==> [git] Batch fix all to remote tree HEAD: git reset hard master ${Off}"
+            # cd "$projectroot"/webcomics/"$gitdirectories"
+            # git reset --hard master
+            
+            cd "$projectroot"/webcomics/"$directories"
+            gnome-terminal --command="$projectroot"/scripts/renderfarm.sh &
+            read -t 150 -p "* Hit ENTER or wait 2 minute and 30s"
+
                       
           elif [ $gitremote = $gitbase ]; then
             echo "${Purple} * $directories contains commit non pushed${Off}"
