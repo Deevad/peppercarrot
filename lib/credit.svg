@@ -12,10 +12,10 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r"
+   inkscape:version="0.48.5 r10040"
    width="2481"
    height="4503"
-   sodipodi:docname="credit.svg">
+   sodipodi:docname="Pepper-and-Carrot_by-David-Revoy_EYYPXX.svg">
   <metadata
      id="metadata8">
     <rdf:RDF>
@@ -43,9 +43,9 @@
      inkscape:window-height="837"
      id="namedview4"
      showgrid="false"
-     inkscape:zoom="0.2602153"
-     inkscape:cx="1326.5467"
-     inkscape:cy="3510.0363"
+     inkscape:zoom="0.42081039"
+     inkscape:cx="1100.7511"
+     inkscape:cy="4242.4741"
      inkscape:window-x="0"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
@@ -66,7 +66,7 @@
      transform="translate(0,1024)"
      sodipodi:insensitive="true">
     <image
-       sodipodi:absref="/home/deevad/peppercarrot/scripts/lib/../gfx_Pepper-and-Carrot_by-David-Revoy_EYYPXX.png"
+       sodipodi:absref="/home/deevad/peppercarrot/webcomics/New/gfx_Pepper-and-Carrot_by-David-Revoy_EYYPXX.png"
        xlink:href="../gfx_Pepper-and-Carrot_by-David-Revoy_EYYPXX.png"
        width="2481.4438"
        height="4504.5391"
@@ -81,19 +81,7 @@
      id="layer3"
      inkscape:label="speechbubbles"
      style="display:inline"
-     transform="translate(0,1024)">
-    <path
-       style="fill:#ffffff;stroke:none"
-       d="m -2021.8885,646.19917 c 1.0628,-51.0158 26.5707,-103.09442 170.0526,-112.65988 143.4819,-9.56546 203.0004,48.89014 207.2517,90.34047 4.2513,41.45033 -82.9007,96.71744 -162.6129,97.78027 -79.7121,1.06282 -214.6914,-11.69112 -214.6914,-75.46086 z"
-       id="path4279"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:#ffffff;stroke:none"
-       d="m -1788.0661,898.08964 c 70.1467,-44.63882 88.2148,-124.35099 45.7016,-190.24639 -42.5132,-65.8954 -82.9007,-54.20428 -82.9007,-54.20428 l 35.0734,41.45033 c 0,0 97.7803,97.78027 2.1257,203.00034 z"
-       id="path4281"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="csccc" />
-  </g>
+     transform="translate(0,1024)" />
   <g
      inkscape:groupmode="layer"
      id="layer2"
@@ -102,76 +90,37 @@
      transform="translate(0,1024)">
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.71540833px;line-height:125%;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;display:inline;fill:#000000;fill-opacity:1;stroke:none"
-       x="1240.9395"
-       y="-820.94409"
-       id="text4213"
+       style="font-size:13.71540833px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;opacity:0.85500004;fill:#483e37;fill-opacity:1;stroke:none;display:inline;filter:url(#filter4155);font-family:Arial;-inkscape-font-specification:Arial"
+       x="1240.4587"
+       y="-773.15283"
+       id="text4162"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         id="tspan4215"
-         x="1240.9395"
-         y="-820.94409"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;font-family:Lavi;-inkscape-font-specification:Lavi">Pepper&amp;Carrot is entirely free, open-source and sponsored</tspan><tspan
+         x="1240.4587"
+         y="-773.15283"
+         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#483e37;font-family:Lavi;-inkscape-font-specification:Lavi"
+         id="tspan4166">Pepper &amp; Carrot is entirely free, open-source</tspan><tspan
          sodipodi:role="line"
-         x="1240.9395"
-         y="-758.44409"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;font-family:Lavi;-inkscape-font-specification:Lavi"
-         id="tspan4217">thanks to the patronage of its readers.</tspan><tspan
+         x="1240.4587"
+         y="-723.15283"
+         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#483e37;font-family:Lavi;-inkscape-font-specification:Lavi"
+         id="tspan3384">and sponsored thanks to the patronage of its readers.</tspan><tspan
          sodipodi:role="line"
-         x="1240.9395"
-         y="-695.94409"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:50px;font-family:Lavi;-inkscape-font-specification:Lavi"
-         id="tspan4219">For this episode, thank you to the XXX Patrons:</tspan></text>
+         x="1240.4587"
+         y="-673.15283"
+         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#483e37;font-family:Lavi;-inkscape-font-specification:Lavi"
+         id="tspan3382">For this episode, thanks go to XXX Patrons:</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.29317284px;line-height:125%;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;display:inline;fill:#000000;fill-opacity:1;stroke:none"
-       x="1408.7443"
-       y="2901.1709"
+       style="font-size:12.29317284px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;opacity:0.85500004;fill:#483e37;fill-opacity:1;stroke:none;display:inline;filter:url(#filter4155);font-family:Arial;-inkscape-font-specification:Arial"
+       x="1240.49"
+       y="3271.4817"
        id="text4221"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4223"
-         x="1408.7443"
-         y="2901.1709"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:41.25px;font-family:Lavi;-inkscape-font-specification:Lavi">You too can become a patron of Pepper&amp;Carrot for the next episode at</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.84348011px;line-height:125%;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;display:inline;fill:#a72f14;fill-opacity:1;stroke:none"
-       x="1419.4685"
-       y="2978.8181"
-       id="text4225"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan4227"
-         x="1419.4685"
-         y="2978.8181"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:60px;font-family:Lavi;-inkscape-font-specification:Lavi">http://www.patreon.com/davidrevoy</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.72782516px;line-height:125%;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;display:inline;fill:#000000;fill-opacity:1;stroke:none"
-       x="1207.6826"
-       y="3137.168"
-       id="text4229"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan4231"
-         x="1213.835"
-         y="3137.168"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:35px;font-family:Lavi;-inkscape-font-specification:Lavi">License : Creative Commons Attribution 4.0 </tspan><tspan
-         sodipodi:role="line"
-         x="1213.835"
-         y="3180.918"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:35px;font-family:Lavi;-inkscape-font-specification:Lavi"
-         id="tspan4233">Source : available at www.peppercarrot.com </tspan><tspan
-         sodipodi:role="line"
-         x="1213.835"
-         y="3224.668"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:35px;font-family:Lavi;-inkscape-font-specification:Lavi"
-         id="tspan4235">Software : this episode was 100% drawn with libre software </tspan><tspan
-         sodipodi:role="line"
-         x="1213.835"
-         y="3268.418"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:35px;font-family:Lavi;-inkscape-font-specification:Lavi"
-         id="tspan4237">Krita 2.9.9 , Inkscape 0.91 on Linux Mint 17 </tspan></text>
+         x="1240.49"
+         y="3271.4817"
+         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#483e37;font-family:Lavi;-inkscape-font-specification:Lavi">You too can become a patron of Pepper &amp; Carrot at www.patreon.com/davidrevoy</tspan></text>
   </g>
 </svg>
