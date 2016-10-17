@@ -206,8 +206,8 @@ elif [ "$menuchoicecleaned" = "Render all episodes" ]; then
     episodefolder=$directories
     if [[ $episodefolder == *"ep"* ]]; then
       cd "$folder_webcomics"/"$episodefolder"/
-      gnome-terminal --command="$folder_scripts"/renderfix_hires.sh &
-      zenity --info --text 'Press ok to render the next episode'
+      gnome-terminal --command="$folder_scripts"/renderfarm.sh &
+      sleep 40
     fi
   done
     
