@@ -2,7 +2,7 @@
 
 #: Title       : Pepper&Carrot Renderfarm
 #: Author      : David REVOY < info@davidrevoy.com >, Mjtalkiewicz (aka Player_2)
-#: License     : GPL
+#: License     : GPLv3 or higher
 
 scriptversion="5.0"
 
