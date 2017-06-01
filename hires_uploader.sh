@@ -73,7 +73,7 @@ _display_ui_header
 script_runtime_start=$(date +"%s")
 
 ftpurl="ftp://$configuser:$configpass@$confighost"
-localdirectory="/home/deevad/peppercarrot/webcomics/"
+localdirectory="$projectroot"/webcomics/
 remotedirectory="/www/0_sources/"
 
 lftp -c "set ftp:list-options -a;
