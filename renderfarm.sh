@@ -2,9 +2,9 @@
 
 #: Title       : Pepper&Carrot Renderfarm
 #: Author      : David REVOY < info@davidrevoy.com >, Mjtalkiewicz (aka Player_2)
-#: License     : GPLv3 or higher
+#: License     : GPL
 
-scriptversion="5.0"
+scriptversion="6.0"
 
 # User preferences:
 # Optional module to activate ( 1=yes, 0=no ):
@@ -23,6 +23,7 @@ export folder_lowres="low-res"
 export folder_singlepage="single-page"
 export folder_hires="hi-res"
 export folder_gfxonly="gfx-only"
+export folder_txtonly="txt-only"
 export folder_wip="wip"
 export folder_zip="zip"
 
@@ -110,6 +111,13 @@ _dir_creation()
   else
     echo "${Green} * creating folder: $folder_hires/$folder_gfxonly ${Off}"
     mkdir -p "$workingpath"/"$folder_hires"/"$folder_gfxonly"
+  fi
+  
+  if [ -d "$workingpath"/"$folder_hires"/"$folder_txtonly" ]; then
+    echo " * $folder_txtonly found" 
+  else
+    echo "${Green} * creating folder: $folder_hires/$folder_txtonly ${Off}"
+    mkdir -p "$workingpath"/"$folder_hires"/"$folder_txtonly"
   fi
 
   if [ -d "$workingpath/$folder_backup" ]; then
@@ -241,7 +249,7 @@ _update_gfx_kra_work()
   kra_tmpfolder=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')""
   jpgfileversionning=$(echo $krafile|sed 's/\(.*\)\..\+/\1/')_$version".jpg"
   rendermefile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')"-renderme.txt"
-
+  
   # Read the checksum of *.kra file
   md5read="`md5sum $krafile`"
   
@@ -280,11 +288,11 @@ _update_gfx_kra_work()
     fi
 
     # Update Hires gfx-only folder
-    convert -units PixelsPerInch -strip -interlace Plane "$workingpath"/"$folder_cache"/gfx_"$pngfile" -density 300 -colorspace sRGB -quality 95% "$workingpath"/"$folder_hires"/"$folder_gfxonly"/gfx_"$jpgfile"
+    convert -units PixelsPerInch -strip -interlace Plane "$workingpath"/"$folder_cache"/gfx_"$pngfile" -density 300 -colorspace sRGB -background white -alpha remove -define png:compression-strategy=3 -define png:color-type=2 -define png:compression-level=9 "$workingpath"/"$folder_hires"/"$folder_gfxonly"/gfx_"$pngfile"
 
     # Generate low-res *.png in lang
     convert "$workingpath"/"$folder_cache"/gfx_"$pngfile" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lang"/gfx_"$pngfile"
-
+    
     # Generate low-res gfx_file.jpg in low-res/gfx-only
     convert "$workingpath"/"$folder_cache"/gfx_"$pngfile" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lowres"/"$folder_gfxonly"/gfx_"$jpgfile"
 
@@ -405,6 +413,7 @@ _update_lang_work()
     if [ -d "$workingpath/$folder_cache/$langdir" ]; then
       true
     else
+      # create the lang dir, and a sub lang dir for later montage
       mkdir -p "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"
       
       # If a new lang folder exist, we need to also copy it's *.gif to low-res
@@ -423,6 +432,9 @@ _update_lang_work()
     
     # Position cursor inside the current cache/lang
     cd "$workingpath"/"$folder_lang"/"$langdir"/
+    
+    # create the txtonly subfolder to store modified txtonly SVG
+    mkdir -p "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"
 
     # New loop : we process the SVG of the current lang dir
     for svgfile in *.svg; do
@@ -444,18 +456,32 @@ _update_lang_work()
 
         echo "${Green} ==> [$langdir] $svgfile is new or modified ${Off}"
         
-        # Copy the fresh SVG in the cache, along the Hi-Res PNG gfx, for a hi-res rendering
+        # Generate Hi-res JPG rendering
+        # Copy the detected updated SVG to the cache
         cp "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile"
-
-        # Generate lossless work PNG
+        # Render the SVG to PNG
         inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
-        
-        # Compress lossless work PNG in Hi-Res JPG
+        # Compress PNG to JPG
         convert -strip -interlace Plane -colorspace sRGB -units PixelsPerInch "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -density 300 -colorspace sRGB -background white -alpha remove -quality 95% "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
-
-        # Copy Hi-res JPG to hi-res final folder
+        # Copy JPG to final folder
         cp "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile" "$workingpath"/"$folder_hires"/"$langdir"_"$jpgfile"
-
+        
+        # Generate txtonly PNG
+        # Copy the detected updated SVG to a subfolder txt-only
+        cp "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$svgfile"
+        # Create a empty PNG
+        convert -size 1x1 xc:none "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$pngfile"
+        # Modify SVG to target to empty PNG
+        sed -i 's/xlink:href="..\/gfx_/xlink:href="/g' "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$svgfile"
+        # Render this SVG to a 600DPI PNG
+        inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pngfile"
+        # clean up the empty PNG
+        rm -f "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$pngfile"
+        # Compress the PNG
+        convert "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pngfile" -units PixelsPerInch -density 300 -colorspace sRGB -define png:compression-level=9 "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pngfile"
+        # Copy PNG to final folder
+        cp "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pngfile" "$workingpath"/"$folder_hires"/"$folder_txtonly"/"$langdir"_"$pngfile"
+        
         # Crop our lossless work PNG pages in cache to prepare low-res JPG ( cropping exessive white borders for better online web layout )
         if [ $cropping_pages = 1 ]; then
           if echo "$pngfile" | grep -q 'P[0-9][0-9]' ; then
@@ -650,6 +676,7 @@ _clean_cache()
     
     # clean up folders
     rm -rf "$workingpath"/"$folder_cache"/"$langdir"/montage
+    rm -rf "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"
     
   done
 }
