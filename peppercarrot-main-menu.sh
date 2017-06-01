@@ -212,10 +212,20 @@ elif [ "$menuchoicecleaned" = "Render all episodes" ]; then
   done
     
 elif [ "$menuchoicecleaned" = "Generate Markdown files" ]; then
-  # Clean old version
+
+  ########################### 
+  # GENERATE MARKDOWN FILES #
+  ###########################
+
+  # Remove previous markdown generated 
+  cd "$folder_webcomics"
+  rm "$folder_webcomics"/README-GENERAL-LICENSE.md 
   rm "$folder_webcomics"/.episodes-list.md
-  
-  # Loop on episodes and output a sort of listing of episode names.
+  rm "$folder_webcomics"/episode.json
+
+
+  # Generate .episode-list.md
+  # =========================
   for directories in $(find $folder_webcomics -maxdepth 1 -type d -printf '%f\n' | sort ); do
     episodefolder=$directories
     if [[ $episodefolder == *"ep"* ]]; then
@@ -224,12 +234,40 @@ elif [ "$menuchoicecleaned" = "Generate Markdown files" ]; then
     fi
   done
   
-  # clean old version 
-  cd "$folder_webcomics"
-  rm "$folder_webcomics"/README-GENERAL-LICENSE.md 
+  # Generate episode.json
+  # =====================
+  touch "$folder_webcomics"/episode.json
+  echo "[" >> "$folder_webcomics"/episode.json
+  for directories in $(find $folder_webcomics -maxdepth 1 -type d -printf '%f\n' | sort ); do
+    episodefolder=$directories
+    if [[ $episodefolder == *"ep"* ]]; then
+      cd "$folder_webcomics"/"$episodefolder"/lang/
+      pagecount=0
+        # subloop: find the number of page
+        for files in $(find $folder_webcomics/"$episodefolder"/lang/ -maxdepth 1 -type f -printf '%f\n' | sort ); do
+            if [[ $files == *.png ]]; then
+            pagecount=$((pagecount+1))
+            fi
+        done
+      # remove cover and header from the count.
+      pagecount=$((pagecount-2))
+      
+      # Generate with jo
+      jo -p name=$episodefolder total_page=$pagecount translated_languages=$(jo -a */) >> "$folder_webcomics"/episode.json
+      echo "," >> "$folder_webcomics"/episode.json
+    fi
+  done
+  # remove last line, to remove the exeeding "," comma
+  sed -i '$ d' "$folder_webcomics"/episode.json
+  # close the global bracket
+  echo "]" >> "$folder_webcomics"/episode.json
+  # clean trailing / printed on lang folders
+  sed -i 's/\///g' "$folder_webcomics"/episode.json
+
   
-  # Generate the CONTRIBUTORS.md
-  # Loop on episodes and glue all readme found
+  # Generate CONTRIBUTORS.md
+  # ========================
+  cd "$folder_webcomics"
   for directories in $(find $folder_webcomics -maxdepth 1 -type d -printf '%f\n' | sort ); do
     episodefolder=$directories
     if [[ $episodefolder == "ep"* ]]; then
@@ -257,6 +295,7 @@ elif [ "$menuchoicecleaned" = "Generate Markdown files" ]; then
   # move the file to final:
   cp D.tmp "$folder_webcomics"/CONTRIBUTORS.md
   
+  cd "$folder_webcomics"
   # cleanup
   rm A.tmp
   rm B.tmp
