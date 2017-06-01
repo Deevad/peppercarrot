@@ -282,7 +282,7 @@ else
   echo "${Green}* $projectroot/www/peppercarrot/themes/peppercarrot-theme_v2/lang not found${Off}"
   echo "${Yellow} => creating symlink ${Off}"
   mkdir -p "$projectroot"/www/peppercarrot/themes/peppercarrot-theme_v2
-  sudo ln -s "$projectroot"/www-lang "$projectroot"/www/peppercarrot/themes/peppercarrot-theme_v2/lang
+  ln -s "$projectroot"/www-lang "$projectroot"/www/peppercarrot/themes/peppercarrot-theme_v2/lang
 fi
 
 # Second part: Update
