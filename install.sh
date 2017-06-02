@@ -341,15 +341,21 @@ cd "$projectroot"/webcomics
             #echo ""
             #done
             
-            #cd hi-res/gfx-only
-            #for pngfile in $(find . -name '*.png')
-            #do
-            #jpgfile=$(echo $pngfile|sed 's/\(.*\)\..\+/\1/')".jpg"
-            #echo " * converting $pngfile => $jpgfile"
-            #convert -strip -interlace Plane -quality 95% "$pngfile" "$jpgfile"
-            #echo " * done"
-            #echo ""
-            #done
+            # Eg. Entering in hires/gfx-only and transforming all PNG to JPG, then delete PNG.
+            # cd hi-res/gfx-only
+            # for pngfile in $(find . -name '*.png'); do
+            #   jpgfile=$(echo $pngfile|sed 's/\(.*\)\..\+/\1/')".jpg"
+            #   echo " ${Blue}* Converting $pngfile ${Off}"
+            #   convert -strip -interlace Plane -units PixelsPerInch -density 300 -colorspace sRGB -background white -alpha remove -quality 95% "$pngfile" "$jpgfile"
+            #   if [ -f "$jpgfile" ]; then
+            #      echo "${Green}* Done.${Off}."
+            #      # cleaning:
+            #      rm -f "$pngfile"
+            #   else
+            #      echo " ${Red}* Error:${Off} jpg non generated."
+            #   fi
+            #   echo ""
+            # done
 
           # Batch Git update them
           cd "$projectroot"/webcomics/"$gitdirectories"
