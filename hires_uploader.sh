@@ -93,7 +93,6 @@ mirror --use-cache \
        --exclude-glob animation/ \
        --exclude-glob backup/ \
        --exclude-glob cache/ \
-       --exclude-glob lang/ \
        --exclude-glob .git/ \
        --exclude-glob wip/ \
        --exclude-glob *.sh \
