@@ -288,7 +288,7 @@ _update_gfx_kra_work()
     fi
 
     # Update Hires gfx-only folder
-    convert -units PixelsPerInch -strip -interlace Plane "$workingpath"/"$folder_cache"/gfx_"$pngfile" -density 300 -colorspace sRGB -background white -alpha remove -define png:compression-strategy=3 -define png:color-type=2 -define png:compression-level=9 "$workingpath"/"$folder_hires"/"$folder_gfxonly"/gfx_"$pngfile"
+    convert -units PixelsPerInch -strip -interlace Plane "$workingpath"/"$folder_cache"/gfx_"$pngfile" -density 300 -colorspace sRGB -quality 95% "$workingpath"/"$folder_hires"/"$folder_gfxonly"/gfx_"$jpgfile"
 
     # Generate low-res *.png in lang
     convert "$workingpath"/"$folder_cache"/gfx_"$pngfile" -resize "$resizejpg" -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -quality 92% "$workingpath"/"$folder_lang"/gfx_"$pngfile"
