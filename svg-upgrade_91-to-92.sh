@@ -13,6 +13,8 @@ export horodate=$(date +%Y-%m-%d_%Hh%M)
 export svgpath=${input%/*}
 export svgfile=${input##*/}
 export logfile="/home/deevad/peppercarrot/convert-log-history.md"
+export refactorsvglist="/home/deevad/peppercarrot/refactor/bad-svg-list.txt"
+export refactorsvgpath="/home/deevad/peppercarrot/refactor/"
 export svgpathpretty="$(echo $svgpath | sed 's/\/home\/deevad\/peppercarrot\/webcomics\///g')"
 export tmppath="/tmp/$horodate-SVGconvert"
 export localrenderpath="$svgpath/../../low-res"
@@ -139,31 +141,13 @@ if [ -f "$tmppath"/"$pngcompare" ]; then
       echo "   Auto detection: Similar." >> $logfile
       _successactions
    else
-      echo "   Auto detection: ${Red} Irregular rendering issue found. ${Off}"
-      echo "   Auto detection: Irregular rendering issue found." >> $logfile
-      # Request user feedback
-      # =====================
-      # Make compare easier to read:
-      # composite "$tmppath"/"$jpgexport" "$tmppath"/"$pngcompare" -blend 7 -resize 680x "$tmppath"/"$pngcompare"
-      convert -delay 50 "$localrenderpath"/"$lang"_"$jpgoldversion" "$tmppath"/"$jpgexport" -resize 680x -loop 0 "$tmppath"/"$gifcompare"
-      # display and ask question
-      xviewer "$tmppath"/"$gifcompare" & (sleep 0.6 && DISPLAY=:0 wmctrl -F -a "Question" -b add,above -e 0,1300,410,-1,-1) & (DISPLAY=:0 zenity --question --title="Question" --text="Is this OK?")
-      # Interpret the feedback:
-      if [ $? -eq 0 ] ; then 
-         echo "   Convertion feedback: ${Green} success. ${Off}"
-         echo "   Convertion feedback: success. $horodate" >> $logfile
-         killall xviewer
-         _successactions
-      else
-         echo "   Convertion feedback: ${Red} Failed. ${Off}"
-         echo "   Convertion feedback: failed. $horodate" >> $logfile
-         inkscape "$svgpath"/"$svgworkfile"
-         echo "   Manual fix in Inkscape: Done."
-         echo "   Manual fix in Inkscape: Done. $horodate" >> $logfile
-         killall xviewer
-         # loop checking the file.
-         _checkandfix
-      fi
+      echo "   Auto detection: ${Red} Probable irregular SVG.${Off} Storing for later review."
+      echo "   Auto detection: **Probable irregular SVG**." >> $logfile
+      # Store a compare easier to read:
+      convert -delay 50 "$localrenderpath"/"$lang"_"$jpgoldversion" "$tmppath"/"$jpgexport" -resize 680x -loop 0 "$refactorsvgpath"/"$lang"_"$gifcompare"
+      # store the name of the file in the blacklist:
+      echo "$svgpath"/"$svgfile" >> "$refactorsvglist"
+      _successactions
    fi
           
 else
@@ -176,7 +160,7 @@ fi
 _checkandfix
 
 # cleanup:
-rm -rf /tmp/$horodate-SVGconvert
+rm -rf "$tmppath"
 
 exit
 

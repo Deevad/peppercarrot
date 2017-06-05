@@ -366,6 +366,9 @@ cd "$projectroot"/webcomics
                "$projectroot"/scripts/svg-upgrade_91-to-92.sh $svgfullpath
                svgcount=$((svgcount+1))
             done
+            echo "${Blue} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
+            echo -n "${Blue} SVG upgrade finished for $directories . Press Enter to continue. ${Off}"
+            read end
 
           # Batch Git update them
           cd "$projectroot"/webcomics/"$gitdirectories"
