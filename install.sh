@@ -22,6 +22,7 @@ export workingpath="${PWD}"
 export isodate=$(date +%Y-%m-%d)
 export version=$(date +%Y-%m-%d_%Hh%M)
 export versiondaily=$(date +%Y%m%d)
+export svgcount=0
 export Off=$'\e[0m'
 export Purple=$'\e[1;35m'
 export Blue=$'\e[1;34m'
@@ -356,6 +357,15 @@ cd "$projectroot"/webcomics
             #   fi
             #   echo ""
             # done
+            
+            # Eg. Entering in lang and execute a command on all SVG
+            cd lang
+            for svgfile in $(find . -name '*.svg'); do
+               svgfullpath=$(readlink -m $svgfile)
+               #echo "* [dry-run] $svgfullpath"
+               "$projectroot"/scripts/svg-upgrade_91-to-92.sh $svgfullpath
+               svgcount=$((svgcount+1))
+            done
 
           # Batch Git update them
           cd "$projectroot"/webcomics/"$gitdirectories"
@@ -396,6 +406,7 @@ cd "$projectroot"/webcomics
         fi
     fi
   done
+  echo "${Blue} * TOTAL SVGs : $svgcount${Off}"
 echo ""
 echo "${Yellow} [UPDATE FONTS]${Off}"
 echo "${Yellow} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"

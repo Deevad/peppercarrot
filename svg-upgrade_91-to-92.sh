@@ -70,7 +70,7 @@ svgworkfile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')"_092.svg"
 pngexport=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')"_092.png"
 jpgexport=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')"_092.png"
 pngcompare=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')"_compare.png"
-
+gifcompare=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')"_compare.gif"
 
 mkdir -p /tmp/$horodate-SVGconvert
 cp "$svgpath"/"$svgfile" "$svgpath"/"$svgworkfile"
@@ -113,8 +113,12 @@ _checkandfix()
 # =============================
 # export SVG to PNG
 inkscape -z "$svgpath"/"$svgworkfile" -e="$tmppath/$pngexport"
-# convert output to something we can compare.
-convert "$tmppath"/"$pngexport" -colorspace sRGB -chop 0x70 -resize 992x -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -background white -alpha remove -quality 92% "$tmppath"/"$jpgexport"
+# crop if it's a page:
+if echo "$tmppath"/"$pngexport" | grep -q 'P[0-9][0-9]' ; then
+   convert "$tmppath"/"$pngexport" -colorspace sRGB -chop 0x70 "$tmppath"/"$pngexport"
+fi
+# resize to old-version size
+convert "$tmppath"/"$pngexport" -resize 992x -unsharp 0.48x0.48+0.50+0.012 -colorspace sRGB -background white -alpha remove -quality 92% "$tmppath"/"$jpgexport"
 # Compare to old-version
 composite "$localrenderpath"/"$lang"_"$jpgoldversion" "$tmppath"/"$jpgexport" -compose difference "$tmppath"/"$pngcompare"
 convert "$tmppath"/"$pngcompare" -brightness-contrast 50x100 "$tmppath"/"$pngcompare"
@@ -140,14 +144,15 @@ if [ -f "$tmppath"/"$pngcompare" ]; then
       # Request user feedback
       # =====================
       # Make compare easier to read:
-      composite "$tmppath"/"$jpgexport" "$tmppath"/"$pngcompare" -blend 7 -resize 680x "$tmppath"/"$pngcompare"
+      # composite "$tmppath"/"$jpgexport" "$tmppath"/"$pngcompare" -blend 7 -resize 680x "$tmppath"/"$pngcompare"
+      convert -delay 50 "$localrenderpath"/"$lang"_"$jpgoldversion" "$tmppath"/"$jpgexport" -resize 680x -loop 0 "$tmppath"/"$gifcompare"
       # display and ask question
-      display "$tmppath"/"$pngcompare" & (sleep 0.6 && DISPLAY=:0 wmctrl -F -a "Question" -b add,above -e 0,1300,410,-1,-1) & (DISPLAY=:0 zenity --question --title="Question" --text="Is this OK?")
+      xviewer "$tmppath"/"$gifcompare" & (sleep 0.6 && DISPLAY=:0 wmctrl -F -a "Question" -b add,above -e 0,1300,410,-1,-1) & (DISPLAY=:0 zenity --question --title="Question" --text="Is this OK?")
       # Interpret the feedback:
       if [ $? -eq 0 ] ; then 
          echo "   Convertion feedback: ${Green} success. ${Off}"
          echo "   Convertion feedback: success. $horodate" >> $logfile
-         killall display
+         killall xviewer
          _successactions
       else
          echo "   Convertion feedback: ${Red} Failed. ${Off}"
@@ -155,7 +160,7 @@ if [ -f "$tmppath"/"$pngcompare" ]; then
          inkscape "$svgpath"/"$svgworkfile"
          echo "   Manual fix in Inkscape: Done."
          echo "   Manual fix in Inkscape: Done. $horodate" >> $logfile
-         killall display
+         killall xviewer
          # loop checking the file.
          _checkandfix
       fi
