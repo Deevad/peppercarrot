@@ -29,7 +29,7 @@ if [ -f "$input" ]; then
           # file must be old SVG.
           if grep -q 'inkscape:version="0.92' "$input"; then
              # file is new SVG: display we browsed it and exit.
-             echo "=> $svgpathpretty/$svgfile"
+             echo "=> [0.92] $svgpathpretty/$svgfile"
              exit
           else
              # file is old SVG.
@@ -77,12 +77,35 @@ cp "$svgpath"/"$svgfile" "$svgpath"/"$svgworkfile"
 
 # Open, Save and close in Inkscape. 
 # (Unfortunately, needs a click on Ignore button and GUI.)
-inkscape --verb=FileSave --verb=FileQuit "$svgpath"/"$svgworkfile"
+inkscape --convert-dpi-method=none --verb=FileSave --verb=FileQuit "$svgpath"/"$svgworkfile"
 # apply quick 0.92.1 fix already known:
 sed -i 's/"0.92.1 unknown"/"0.92.1 renderfarm"/g' "$svgpath"/"$svgworkfile"
 sed -i 's/53.089447/56.089447/g' "$svgpath"/"$svgworkfile"
 # rebuild viewport size and zoom:
 sed -i 's/<metadata/<sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="1813" inkscape:window-height="955" id="namedview70" showgrid="false" inkscape:zoom="0.4" inkscape:cx="1284.4231" inkscape:cy="2618.6204" inkscape:current-layer="layer1" \/><metadata/g' "$svgpath"/"$svgworkfile"
+
+_successactions()
+{
+# copy tmp SVG with real SVG
+mv "$svgpath"/"$svgworkfile" "$svgpath"/"$svgfile"
+# check if the file is valid 0.92
+if grep -q 'inkscape:version="0.92' "$svgpath"/"$svgfile"; then
+   echo "   ${Green}Convertion done.${Off}"
+   echo "   Convertion done. $horodate" >> $logfile
+else
+   echo "   ${Red}[Error]${Off} Writing issue."
+   echo "   **[Error]** Writing issue." >> $logfile
+   exit  
+fi
+# spacing for log and console.
+echo ""
+echo "${Blue}---${Off}"
+echo ""
+echo "" >> $logfile
+echo "---" >> $logfile
+echo "" >> $logfile
+exit
+}
 
 _checkandfix()
 {
@@ -95,49 +118,47 @@ convert "$tmppath"/"$pngexport" -colorspace sRGB -chop 0x70 -resize 992x -unshar
 # Compare to old-version
 composite "$localrenderpath"/"$lang"_"$jpgoldversion" "$tmppath"/"$jpgexport" -compose difference "$tmppath"/"$pngcompare"
 convert "$tmppath"/"$pngcompare" -brightness-contrast 50x100 "$tmppath"/"$pngcompare"
-# bring back a low overlay to see what the page is and scale down for display:
-composite "$tmppath"/"$jpgexport" "$tmppath"/"$pngcompare" -blend 7 -resize 680x "$tmppath"/"$pngcompare"
 
-# if file is rendered, display the difference & Prompt user for question:
+# file "compare" is rendered
 if [ -f "$tmppath"/"$pngcompare" ]; then
    echo "   Compare render: ${Green} done. ${Off}"
    echo "   Compare render: done" >> $logfile
-   display "$tmppath"/"$pngcompare" & (sleep 0.6 && DISPLAY=:0 wmctrl -F -a "Question" -b add,above -e 0,1300,410,-1,-1) & (DISPLAY=:0 zenity --question --title="Question" --text="Is this OK?")
-   # Interpret the feedback:
-   if [ $? -eq 0 ] ; then 
-      killall display
-      echo "   Convertion feedback: ${Green} success. ${Off}"
-      echo "   Convertion feedback: success. $horodate" >> $logfile
-      # copy tmp SVG with real SVG
-      mv "$svgpath"/"$svgworkfile" "$svgpath"/"$svgfile"
-      if grep -q 'inkscape:version="0.92' "$svgpath"/"$svgfile"; then
-         echo "   ${Green}Convertion done.${Off}"
-         echo "   Convertion done. $horodate" >> $logfile
 
-      else
-         echo "   ${Red}[Error]${Off} Writing issue."
-         echo "   **[Error]** Writing issue." >> $logfile
-         exit  
-      fi
-      # cleanup:
-      rm -rf /tmp/$horodate-SVGconvert
-      # spacing for log and console.
-      echo ""
-      echo "${Blue}---${Off}"
-      echo ""
-      echo "" >> $logfile
-      echo "---" >> $logfile
-      echo "" >> $logfile
-
+   # Auto detect problematic pictures 
+   # ================================
+   # (thanks Mc for the method & CalimeroTeknik for simplification ). 
+   # Setting: treshold: 200px colored
+   autodetection=$(convert "$tmppath"/"$pngcompare" -format "%c" histogram:info: | awk '!/white|black/{ a = a + $1 }END{print (a > 200) ? "0" : "1"}')
+   
+   if [ $autodetection = 1 ]; then
+      echo "   Auto detection: ${Green} Similar. ${Off}"
+      echo "   Auto detection: Similar." >> $logfile
+      _successactions
    else
-      echo "   Convertion feedback: ${Red} Failed. ${Off}"
-      echo "   Convertion feedback: failed. $horodate" >> $logfile
-      inkscape "$svgpath"/"$svgworkfile"
-      echo "   Manual fix in Inkscape: Done."
-      echo "   Manual fix in Inkscape: Done. $horodate" >> $logfile
-      killall display
-      # loop checking the file.
-      _checkandfix
+      echo "   Auto detection: ${Red} Irregular rendering issue found. ${Off}"
+      echo "   Auto detection: Irregular rendering issue found." >> $logfile
+      # Request user feedback
+      # =====================
+      # Make compare easier to read:
+      composite "$tmppath"/"$jpgexport" "$tmppath"/"$pngcompare" -blend 7 -resize 680x "$tmppath"/"$pngcompare"
+      # display and ask question
+      display "$tmppath"/"$pngcompare" & (sleep 0.6 && DISPLAY=:0 wmctrl -F -a "Question" -b add,above -e 0,1300,410,-1,-1) & (DISPLAY=:0 zenity --question --title="Question" --text="Is this OK?")
+      # Interpret the feedback:
+      if [ $? -eq 0 ] ; then 
+         echo "   Convertion feedback: ${Green} success. ${Off}"
+         echo "   Convertion feedback: success. $horodate" >> $logfile
+         killall display
+         _successactions
+      else
+         echo "   Convertion feedback: ${Red} Failed. ${Off}"
+         echo "   Convertion feedback: failed. $horodate" >> $logfile
+         inkscape "$svgpath"/"$svgworkfile"
+         echo "   Manual fix in Inkscape: Done."
+         echo "   Manual fix in Inkscape: Done. $horodate" >> $logfile
+         killall display
+         # loop checking the file.
+         _checkandfix
+      fi
    fi
           
 else
@@ -148,6 +169,10 @@ fi
 }
 
 _checkandfix
+
+# cleanup:
+rm -rf /tmp/$horodate-SVGconvert
+
 exit
 
 
