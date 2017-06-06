@@ -358,15 +358,21 @@ cd "$projectroot"/webcomics
             #   echo ""
             # done
             
-            # Eg. Entering in lang and execute a command on all SVG
-            cd lang
-            for svgfile in $(find . -name '*.svg'); do
-               svgfullpath=$(readlink -m $svgfile)
-               "$projectroot"/scripts/svg-upgrade_91-to-92.sh $svgfullpath
-               svgcount=$((svgcount+1))
-            done
+            # execute a command on all SVG
+            # Eg. Entering in lang
+            # cd "$projectroot"/webcomics/"$gitdirectories"
+            # Pretty title
+            # echo "${Blue}* Command on all SVGs ${Off}"
+            #for svgfile in $(find . -name '*.svg'); do
+            #   svgcount=$((svgcount+1))
+            #   echo "[ ""$svgcount"" ]"
+            #   svgfullpath=$(readlink -m $svgfile)
+            #   "$projectroot"/scripts/utils/svg-sanifier.sh $svgfullpath
+            #done
+
             echo "${Blue} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
-            #echo -n "${Blue} SVG upgrade finished for $directories . Press Enter to continue. ${Off}"
+            # ask user to press a key before process next episode:
+            #echo -n "${Blue} Press Enter to continue. ${Off}"
             #read end
 
           # Batch Git update them
