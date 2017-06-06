@@ -14,6 +14,7 @@ export svgpath=${input%/*}
 export svgfile=${input##*/}
 export logfile="/home/deevad/peppercarrot/convert-log-history.md"
 export refactorsvglist="/home/deevad/peppercarrot/refactor/bad-svg-list.txt"
+export writeissuesvglist="/home/deevad/peppercarrot/refactor/0_write-issue.txt"
 export refactorsvgpath="/home/deevad/peppercarrot/refactor/"
 export svgpathpretty="$(echo $svgpath | sed 's/\/home\/deevad\/peppercarrot\/webcomics\///g')"
 export tmppath="/tmp/$horodate-SVGconvert"
@@ -26,12 +27,19 @@ export jpgoldversion=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')".jpg"
 if [ -f "$input" ]; then
     # file must be SVG
     if grep -q 'inkscape:version' "$input"; then
+       # we have a SVG, always fix permissions
+       chmod 755 "$svgpath"/"$svgfile"
+       chmod -x "$svgpath"/"$svgfile"
        # file must get linked to a previous render.
        if [ -f "$localrenderpath"/"$lang"_"$jpgoldversion" ]; then
-          # file must be old SVG.
+          # file must be linked to an-old render of the SVG.
           if grep -q 'inkscape:version="0.92' "$input"; then
              # file is new SVG: display we browsed it and exit.
              echo "=> [0.92] $svgpathpretty/$svgfile"
+              # quick fix for SVG header
+              if grep -q 'inkscape:version="0.92.1 unkown' "$input"; then
+                sed -i 's/"0.92.1 unknown"/"0.92.1 renderfarm"/g' "$svgpath"/"$svgfile"
+              fi
              exit
           else
              # file is old SVG.
@@ -74,7 +82,10 @@ jpgexport=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')"_092.png"
 pngcompare=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')"_compare.png"
 gifcompare=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')"_compare.gif"
 
+# create tmp folder for storing temporary file manipulations.
 mkdir -p /tmp/$horodate-SVGconvert
+
+# make a work copy. We need same environment, so exeptionally we'll use same folder.
 cp "$svgpath"/"$svgfile" "$svgpath"/"$svgworkfile"
 
 # Open, Save and close in Inkscape. 
@@ -97,6 +108,9 @@ if grep -q 'inkscape:version="0.92' "$svgpath"/"$svgfile"; then
 else
    echo "   ${Red}[Error]${Off} Writing issue."
    echo "   **[Error]** Writing issue." >> $logfile
+   echo "   => please fix manually: $svgpath/$svgfile " >> $logfile
+   echo "$svgpath"/"$svgfile" >> $writeissuesvglist
+   echo ""
    exit  
 fi
 # spacing for log and console.
@@ -159,8 +173,12 @@ fi
 
 _checkandfix
 
-# cleanup:
+# Cleanup:
 rm -rf "$tmppath"
+
+# Ensure permission are right after move.
+chmod 755 "$svgpath"/"$svgfile"
+chmod -x "$svgpath"/"$svgfile"
 
 exit
 

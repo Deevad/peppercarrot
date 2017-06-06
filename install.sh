@@ -362,13 +362,12 @@ cd "$projectroot"/webcomics
             cd lang
             for svgfile in $(find . -name '*.svg'); do
                svgfullpath=$(readlink -m $svgfile)
-               #echo "* [dry-run] $svgfullpath"
                "$projectroot"/scripts/svg-upgrade_91-to-92.sh $svgfullpath
                svgcount=$((svgcount+1))
             done
             echo "${Blue} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
-            echo -n "${Blue} SVG upgrade finished for $directories . Press Enter to continue. ${Off}"
-            read end
+            #echo -n "${Blue} SVG upgrade finished for $directories . Press Enter to continue. ${Off}"
+            #read end
 
           # Batch Git update them
           cd "$projectroot"/webcomics/"$gitdirectories"
