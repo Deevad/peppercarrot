@@ -443,6 +443,7 @@ _update_lang_work()
     # New loop : we process the SVG of the current lang dir
     for svgfile in *.svg; do
       pngfile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')".png"
+      pdffile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')".pdf"
       jpgfile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')".jpg"
       rendermefile=$(echo $svgfile|sed 's/\(.*\)\..\+/\1/')"-renderme.txt"
       
@@ -493,14 +494,14 @@ _update_lang_work()
         convert -size 1x1 xc:none "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$pngfile"
         # Modify SVG to target to empty PNG
         sed -i 's/xlink:href="..\/gfx_/xlink:href="/g' "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$svgfile"
-        # Render this SVG to a 600DPI PNG
-        "$inkscapeversion" -z "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pngfile"
+        # Render this SVG to PDF
+        "$inkscapeversion" -z "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$svgfile" --export-area-drawing --export-pdf="$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pdffile"
         # clean up the empty PNG
         rm -f "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$pngfile"
         # Compress the PNG
-        convert "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pngfile" -units PixelsPerInch -density 300 -colorspace sRGB -define png:compression-level=9 "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pngfile"
+        # convert "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pngfile" -units PixelsPerInch -density 300 -colorspace sRGB -define png:compression-level=9 "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pngfile"
         # Copy PNG to final folder
-        cp "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pngfile" "$workingpath"/"$folder_hires"/"$folder_txtonly"/"$langdir"_"$pngfile"
+        cp "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pdffile" "$workingpath"/"$folder_hires"/"$folder_txtonly"/"$langdir"_"$pdffile"
         
         # Crop our lossless work PNG pages in cache to prepare low-res JPG ( cropping exessive white borders for better online web layout )
         if [ $cropping_pages = 1 ]; then
