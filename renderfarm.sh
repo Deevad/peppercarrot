@@ -15,6 +15,10 @@ export zip_generation=0
 # Low-res horyzontal width, default "992x".
 export resizejpg="992x"
 
+# Inkscape path to executable:
+export inkscape92="/home/deevad/sources/inkscape/92/inst/bin/inkscape"
+export inkscape91="inkscape"
+
 # Custom folders names:
 export folder_backup="backup"
 export folder_cache="cache"
@@ -454,13 +458,29 @@ _update_lang_work()
         true
       else
 
-        echo "${Green} ==> [$langdir] $svgfile is new or modified ${Off}"
+        if grep -q 'inkscape:version="0.92' "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile"; then
+          # Inkscape 0.92 SVG file detected, use compiled version in a path:
+          inkscapeversion="$inkscape92"
+          # Custom title
+          echo "${Green} ==> [$langdir] $svgfile ${Blue}(0.92.1)${Green} is new or modified ${Off}"
+          # Check if the path is valid
+          if [ ! -f "$inkscapeversion" ]; then
+             echo "${Red}* [error] l.463: $inkscapeversion Not found. Falling back on Inkscape 0.91 ${Off}"
+             # Fallback to inkscape 0.91:
+             inkscapeversion="$inkscape91"
+          fi
+        else
+          # Custom title
+          echo "${Green} ==> [$langdir] $svgfile is new or modified ${Off}"
+          # Probably Inkscape 0.48~0.91 SVG files, use default executable
+          inkscapeversion="$inkscape91"
+        fi
         
         # Generate Hi-res JPG rendering
         # Copy the detected updated SVG to the cache
         cp "$workingpath"/"$folder_lang"/"$langdir"/"$svgfile" "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile"
         # Render the SVG to PNG
-        inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
+        "$inkscapeversion" -z "$workingpath"/"$folder_cache"/"$langdir"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile"
         # Compress PNG to JPG
         convert -strip -interlace Plane -colorspace sRGB -units PixelsPerInch "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$pngfile" -density 300 -colorspace sRGB -background white -alpha remove -quality 95% "$workingpath"/"$folder_cache"/"$langdir"/"$langdir"_"$jpgfile"
         # Copy JPG to final folder
@@ -474,7 +494,7 @@ _update_lang_work()
         # Modify SVG to target to empty PNG
         sed -i 's/xlink:href="..\/gfx_/xlink:href="/g' "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$svgfile"
         # Render this SVG to a 600DPI PNG
-        inkscape -z "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pngfile"
+        "$inkscapeversion" -z "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$svgfile" -e="$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pngfile"
         # clean up the empty PNG
         rm -f "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$pngfile"
         # Compress the PNG
