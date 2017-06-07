@@ -370,6 +370,22 @@ cd "$projectroot"/webcomics
             #   "$projectroot"/scripts/utils/svg-sanifier.sh $svgfullpath
             #done
             
+            # execute a command on SVGs selected with a string
+            # Eg. Entering in lang
+            #cd "$projectroot"/webcomics/"$gitdirectories"
+            # Pretty title
+            #echo "${Blue}* Command on all SVGs ${Off}"
+            #for svgfile in $(find . -name '*.svg'); do
+            #svgfullpath=$(readlink -m $svgfile)
+            #   if grep -q 'radius="0.59999999999999998"' "$svgfullpath"; then
+            #      echo "[ ""$svgcount"" ] ""$svgfullpath"
+            #      svgcount=$((svgcount+1))
+            #      echo "${Red}"
+            #      grep 'radius="0.59999999999999998"' "$svgfullpath"
+            #      echo "${Off}"
+            #   fi
+            #done
+            
             # execute a command for white-transparency-background on all 5800 TXT-only PNGs
             # Entering Txt-only :
             #if [ -d "$projectroot"/webcomics/"$directories"/hi-res/txt-only ]; then
