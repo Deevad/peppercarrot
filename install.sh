@@ -369,6 +369,20 @@ cd "$projectroot"/webcomics
             #   svgfullpath=$(readlink -m $svgfile)
             #   "$projectroot"/scripts/utils/svg-sanifier.sh $svgfullpath
             #done
+            
+            # execute a command for white-transparency-background on all 5800 TXT-only PNGs
+            # Entering Txt-only :
+            #if [ -d "$projectroot"/webcomics/"$directories"/hi-res/txt-only ]; then
+            #   cd "$projectroot"/webcomics/"$directories"/hi-res/txt-only
+            #   # Pretty title
+            #   echo "${Blue}* Command on all TXT-ONLY ${Off}"
+            #   for pngfile in $(find . -name '*.png'); do
+            #       pngfullpath=$(readlink -m $pngfile)
+            #       convert $pngfullpath -background White -alpha Background $pngfullpath
+            #       echo " * ""$pngfile"" Converted"
+            #   done
+            #fi
+            
 
             echo "${Blue} =-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= ${Off}"
             # ask user to press a key before process next episode:
