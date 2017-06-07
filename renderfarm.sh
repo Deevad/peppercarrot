@@ -498,7 +498,7 @@ _update_lang_work()
         # clean up the empty PNG
         rm -f "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$pngfile"
         # Compress the PNG
-        convert "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pngfile" -units PixelsPerInch -density 300 -colorspace sRGB -define png:compression-level=9 "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pngfile"
+        convert "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pngfile" -units PixelsPerInch -density 300 -colorspace sRGB -define png:compression-level=9 -background White -alpha Background "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pngfile"
         # Copy PNG to final folder
         cp "$workingpath"/"$folder_cache"/"$langdir"/"$folder_txtonly"/"$langdir"_"$pngfile" "$workingpath"/"$folder_hires"/"$folder_txtonly"/"$langdir"_"$pngfile"
         
